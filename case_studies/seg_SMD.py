@@ -1,0 +1,60 @@
+import sys
+import os
+import pandas as pd
+import numpy as np
+from TSpy.dataset import load_SMD
+
+sys.path.append('./')
+from Time2State.time2state import Time2State
+from Time2State.adapers import *
+from Time2State.clustering import *
+from Time2State.default_params import *
+
+script_path = os.path.dirname(__file__)
+data_path = os.path.join(script_path, '../data/SMD/')
+train_path = os.path.join(data_path, 'train')
+test_path = os.path.join(data_path, 'test')
+file_list = os.listdir(os.path.join(data_path, 'train'))
+
+win_size = 512
+step = 100
+
+# 256, 50
+# 512, 100
+# 1024, 200
+
+params_LSE['in_channels'] = 1
+params_LSE['M'] = 10
+params_LSE['N'] = 4
+params_LSE['out_channels'] = 2
+params_LSE['nb_steps'] = 10
+params_LSE['compared_length'] = win_size
+params_LSE['kernel_size'] = 3
+
+if not os.path.exists('case_study1/state_seq/'):
+    os.makedirs('case_study1/state_seq/')
+
+def seg_all():
+    for file_name in file_list:
+        file_name = file_name[:-4]
+        _,_,_,_,data,_ = load_SMD(data_path, file_name)
+        state_seq_array = []
+        for i in range(data.shape[1]):
+            t2s = Time2State(win_size, step, CausalConv_LSE_Adaper(params_LSE), DPGMM(3)).fit(data[:,i].reshape(-1,1), win_size, step)
+            state_seq_array.append(t2s.state_seq)
+        state_seq_array = np.array(state_seq_array)
+        np.save('case_study1/state_seq/'+file_name+'.npy', state_seq_array)
+        print(file_name)
+
+def seg_one(file_name):
+    data,_,_,_,_,_ = load_SMD(data_path, file_name)
+    state_seq_array = []
+    for i in range(data.shape[1]):
+        t2s = Time2State(win_size, step, CausalConv_LSE_Adaper(params_LSE), DPGMM(3)).fit(data[:,i].reshape(-1,1), win_size, step)
+        state_seq_array.append(t2s.state_seq)
+    state_seq_array = np.array(state_seq_array)
+    np.save('case_study1/state_seq/'+file_name+'.npy', state_seq_array)
+    print(file_name)
+
+# seg_all()
+seg_one('machine-1-1')
