@@ -5,6 +5,7 @@ Baselines/AutoPlait/output
 .ipynb_checkpoints
 *.npy
 *.npz
+*.png
 .vscode
 SMD
 temp_fig

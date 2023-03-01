@@ -1,3 +1,4 @@
+from cProfile import label
 import os
 import numpy as np
 import matplotlib.pyplot as plt
@@ -22,28 +23,28 @@ def exclude_outlier(X):
     return X
 
 def find_top_k(id, k):
-    data,_,_,_,_,_ = load_SMD(data_path, use_data)
+    data,label,_,_,_,_ = load_SMD(data_path, use_data)
     corr_matrix = np.load(matrix_path)
     state_seq_array = np.load(state_seq_path)
     col = corr_matrix[:,id]
     idx = np.argsort(-col)
     print(idx)
 
-    # plt.style.use('bmh')
-    fig, ax = plt.subplots(nrows=k, sharex=True, figsize=(4,8))
-    for i in range(k):
-        data_ = data[:,idx[i]]
-        state_seq = adjust_label(state_seq_array[idx[i]]).reshape(1,-1)
-        state_seq = np.concatenate([state_seq, state_seq])
-        # ax[i].plot(exclude_outlier(data_), color= '#348ABC')
-        ax[i].imshow(state_seq, aspect='auto', cmap='tab20c', interpolation='nearest', alpha=0.5, origin='lower')
-        # ax[i].plot(data_, lw=0.5, color= '#348ABC')
-        ax[i].plot(data_, lw=0.5)
-        ax[i].set_ylim([-0.1,1.1])
+    # fig, ax = plt.subplots(nrows=k, sharex=True, figsize=(8,4))
+    # for i in range(k):
+    data_ = data[:,idx[1]]
+    state_seq = adjust_label(state_seq_array[idx[1]]).reshape(1,-1)
+    state_seq = np.concatenate([state_seq, state_seq])
+    label = np.concatenate([label.reshape(1,-1), label.reshape(1,-1)])
+    print(label.shape)
+    plt.figure(figsize=(4,1.5))
+    plt.imshow(state_seq, aspect='auto', cmap='tab20c', interpolation='nearest', alpha=0.5, origin='lower')
+    # plt.imshow(label, aspect='auto', cmap='tab20c', interpolation='nearest', alpha=0.5, origin='lower')
+    plt.plot(data_, lw=0.5)
+    plt.ylim([-0.1,1.1])
     plt.tight_layout()
     plt.subplots_adjust(hspace=0.2)
-    plt.savefig('look.png')
+    plt.savefig('zoom_in.png')
     print(idx[:k])
 
-find_top_k(14, 10)
-# find_top_k(18, 5)
+find_top_k(14, 5)
