@@ -1,7 +1,7 @@
 import sys
 import os
-import pandas as pd
 import numpy as np
+import tqdm
 from TSpy.dataset import load_SMD
 
 sys.path.append('./')
@@ -10,14 +10,15 @@ from Time2State.adapers import *
 from Time2State.clustering import *
 from Time2State.default_params import *
 
+
 script_path = os.path.dirname(__file__)
 data_path = os.path.join(script_path, '../data/SMD/')
 train_path = os.path.join(data_path, 'train')
 test_path = os.path.join(data_path, 'test')
 file_list = os.listdir(os.path.join(data_path, 'train'))
 
-win_size = 512
-step = 100
+win_size = 1024
+step = 200
 
 # 256, 50
 # 512, 100
@@ -40,7 +41,7 @@ def seg_all():
         _,_,_,_,data,_ = load_SMD(data_path, file_name)
         state_seq_array = []
         for i in range(data.shape[1]):
-            t2s = Time2State(win_size, step, CausalConv_LSE_Adaper(params_LSE), DPGMM(3)).fit(data[:,i].reshape(-1,1), win_size, step)
+            t2s = Time2State(win_size, step, CausalConv_LSE_Adaper(params_LSE), DPGMM(None)).fit(data[:,i].reshape(-1,1), win_size, step)
             state_seq_array.append(t2s.state_seq)
         state_seq_array = np.array(state_seq_array)
         np.save('case_study1/state_seq/'+file_name+'.npy', state_seq_array)
@@ -49,12 +50,12 @@ def seg_all():
 def seg_one(file_name):
     data,_,_,_,_,_ = load_SMD(data_path, file_name)
     state_seq_array = []
-    for i in range(data.shape[1]):
-        t2s = Time2State(win_size, step, CausalConv_LSE_Adaper(params_LSE), DPGMM(3)).fit(data[:,i].reshape(-1,1), win_size, step)
+    for i in tqdm.tqdm(range(data.shape[1])):
+        t2s = Time2State(win_size, step, CausalConv_LSE_Adaper(params_LSE), DPGMM(None)).fit(data[:,i].reshape(-1,1), win_size, step)
         state_seq_array.append(t2s.state_seq)
     state_seq_array = np.array(state_seq_array)
     np.save('case_study1/state_seq/'+file_name+'.npy', state_seq_array)
     print(file_name)
 
 # seg_all()
-seg_one('machine-1-1')
+seg_one('machine-1-6')
