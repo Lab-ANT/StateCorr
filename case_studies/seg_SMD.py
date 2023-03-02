@@ -27,8 +27,8 @@ step = 200
 params_LSE['in_channels'] = 1
 params_LSE['M'] = 10
 params_LSE['N'] = 4
-params_LSE['out_channels'] = 2
-params_LSE['nb_steps'] = 10
+params_LSE['out_channels'] = 1
+params_LSE['nb_steps'] = 20
 params_LSE['compared_length'] = win_size
 params_LSE['kernel_size'] = 3
 

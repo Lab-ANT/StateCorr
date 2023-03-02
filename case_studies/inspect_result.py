@@ -9,8 +9,8 @@ data_path = os.path.join(script_path, '../data/SMD/')
 
 use_data = 'machine-1-6'
 
-# matrix_path = os.path.join(script_path, '../case_study1/pearson/'+use_data+'.npy')
-matrix_path = os.path.join(script_path, '../case_study1/state/'+use_data+'.npy')
+matrix_path = os.path.join(script_path, '../case_study1/pearson/'+use_data+'.npy')
+# matrix_path = os.path.join(script_path, '../case_study1/state/'+use_data+'.npy')
 state_seq_path = os.path.join(script_path, '../case_study1/state_seq/'+use_data+'.npy')
 
 def exclude_outlier(X):
@@ -30,14 +30,13 @@ def find_top_k(id, k):
     print(idx)
 
     # plt.style.use('bmh')
-    fig, ax = plt.subplots(nrows=k, sharex=True, figsize=(4,8))
+    fig, ax = plt.subplots(nrows=k, sharex=True, figsize=(4,4.5))
     for i in range(k):
         data_ = data[:,idx[i]]
         state_seq = adjust_label(state_seq_array[idx[i]]).reshape(1,-1)
         state_seq = np.concatenate([state_seq, state_seq])
         # ax[i].plot(exclude_outlier(data_), color= '#348ABC')
-        ax[i].imshow(state_seq, aspect='auto', cmap='tab20c', interpolation='nearest', alpha=0.5, origin='lower')
-        # ax[i].plot(data_, lw=0.5, color= '#348ABC')
+        # ax[i].imshow(state_seq, aspect='auto', cmap='tab20c', interpolation='nearest', alpha=0.5, origin='lower')
         ax[i].plot(data_, lw=0.5)
         ax[i].set_ylim([-0.1,1.1])
     plt.tight_layout()
@@ -45,5 +44,5 @@ def find_top_k(id, k):
     plt.savefig('look.png')
     print(idx[:k])
 
-find_top_k(14, 10)
+find_top_k(14, 6)
 # find_top_k(18, 5)
