@@ -39,4 +39,4 @@ def plot_one(id):
     plt.subplots_adjust(hspace=0.2)
     plt.savefig('machine.png')
 
-plot_one(5)
+plot_one(14)
