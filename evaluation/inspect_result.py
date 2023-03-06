@@ -19,15 +19,18 @@ for i in range(100):
 state_seq_array = np.array(state_seq_array)
 matrix = state_correlation(state_seq_array)
 
+# matrix = pd.DataFrame(state_seq_array).corr('pearson').to_numpy()
+
 prediction = matrix
-print(prediction, groundtruth_matrix)
+# prediction = np.random.rand(10000).reshape(100,100)
+# print(prediction, groundtruth_matrix)
 # matrix[matrix>0.4]=1
 # prediction = matrix>0.4
 # print(f1_score(groundtruth_matrix.flatten(), prediction.flatten()))
 # print(precision_score(groundtruth_matrix.flatten(), prediction.flatten()))
 # print(recall_score(groundtruth_matrix.flatten(), prediction.flatten()))
 
-fpr, tpr, thread = roc_curve(groundtruth_matrix.flatten(), prediction.flatten(), pos_label=True)
+fpr, tpr, thread = roc_curve(groundtruth_matrix.flatten(), prediction.flatten())
 # fpr, tpr, thread = precision_recall_curve(groundtruth_matrix.flatten(), prediction.flatten())
 print(fpr, tpr, thread)
 plt.plot(fpr, tpr, color = 'darkorange')
