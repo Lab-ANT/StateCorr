@@ -26,6 +26,7 @@ for i in range(100):
     state_seq_array.append(state_seq)
 
 state_seq_array = np.array(state_seq_array)
-# matrix, lag_matrix = lagged_state_correlation(state_seq_array)
-matrix = state_correlation(state_seq_array)
+matrix, lag_matrix = lagged_state_correlation(state_seq_array)
+# matrix = state_correlation(state_seq_array)
 np.save(os.path.join(script_path, '../output/'+use_data+'/matrix/matrix.npy'),matrix)
+np.save(os.path.join(script_path, '../output/'+use_data+'/matrix/lag_matrix.npy'),lag_matrix)

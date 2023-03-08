@@ -14,7 +14,7 @@ def draw_boderline(X):
     return X
 
 script_path = os.path.dirname(__file__)
-output_path = os.path.join(script_path, '../output/dataset2')
+output_path = os.path.join(script_path, '../output/'+use_data+'/')
 matrix_path = os.path.join(output_path, 'matrix/matrix.npy')
 true_matrix_path = os.path.join(output_path, 'matrix/true_matrix.npy')
 lag_matrix_path = os.path.join(output_path, 'matrix/lag_matrix.npy')
@@ -25,7 +25,8 @@ if not os.path.exists(figure_output_path):
 
 matrix = np.load(matrix_path)
 true_matrix = np.load(true_matrix_path)
-print(matrix.shape, true_matrix.shape)
+lag_matrix = np.load(lag_matrix_path)
+print(matrix.shape, true_matrix.shape, lag_matrix.shape)
 
 plt.imshow(draw_boderline(matrix))
 plt.colorbar()
@@ -37,6 +38,12 @@ plt.imshow(draw_boderline(true_matrix))
 plt.colorbar()
 plt.tight_layout()
 plt.savefig(os.path.join(figure_output_path,'groundtruth.png'))
+plt.close()
+
+plt.imshow(draw_boderline(lag_matrix))
+plt.colorbar()
+plt.tight_layout()
+plt.savefig(os.path.join(figure_output_path,'lag.png'))
 plt.close()
 
 mse = np.mean(np.sqrt(np.square(matrix-true_matrix)))
