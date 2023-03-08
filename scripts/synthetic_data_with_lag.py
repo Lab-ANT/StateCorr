@@ -115,17 +115,17 @@ for seg_json in seg_json_list:
         seg_json = add_lag(seg_json)
         lagged_seg_json_list.append(seg_json)
 
-# full_path = save_path+dataset_name
-# if not os.path.exists(full_path):
-#     os.makedirs(full_path)
-# if not os.path.exists(save_path+'state_seq_'+dataset_name):
-#     os.makedirs(save_path+'state_seq_'+dataset_name)
+full_path = save_path+dataset_name
+if not os.path.exists(full_path):
+    os.makedirs(full_path)
+if not os.path.exists(save_path+'state_seq_'+dataset_name):
+    os.makedirs(save_path+'state_seq_'+dataset_name)
 
-# for i in tqdm.tqdm(range(num_group*num_ts_in_group)):
-#     data = np.concatenate([gen_from_json(lagged_seg_json_list[i])])
-#     state_seq = seg_to_label(lagged_seg_json_list[i])
-#     np.save(full_path+'/test'+str(i), data)
-#     np.save(save_path+'state_seq_'+dataset_name+'/test'+str(i), state_seq)
+for i in tqdm.tqdm(range(num_group*num_ts_in_group)):
+    data = np.concatenate([gen_from_json(lagged_seg_json_list[i])])
+    state_seq = seg_to_label(lagged_seg_json_list[i])
+    np.save(full_path+'/test'+str(i), data)
+    np.save(save_path+'state_seq_'+dataset_name+'/test'+str(i), state_seq)
 
 # group_list = [generate_group(num_ts_in_group, seg_json) for seg_json in tqdm.tqdm(seg_json_list)]
 
