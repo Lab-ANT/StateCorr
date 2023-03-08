@@ -15,7 +15,7 @@ num_group = 10
 num_ts_in_group = 10
 script_path = os.path.dirname(__file__)
 save_path = os.path.join(script_path, '../data/synthetic_data/')
-dataset_name = 'dataset3'
+dataset_name = 'dataset4'
 random_state = None
 length = 20000
 
@@ -86,17 +86,18 @@ def generate_group(num_ts_in_group, seg_json):
 
 seg_json_list = []
 for i in range(num_group):
-    seg_json =generate_seg_json(seg_len, state_num, random_state)
+    seg_json = generate_seg_json(seg_len, state_num, random_state)
     seg_json_list.append(seg_json)
 
-group_list = [generate_group(num_ts_in_group, seg_json) for seg_json in tqdm.tqdm(seg_json_list)]
+lagged_seg_json_list = []
 
-width = num_ts_in_group * num_group
-groundtruth_matrix = np.zeros(shape=(width, width))
-for i in range(num_group):
-    start = i*num_ts_in_group
-    end = (i+1)*num_ts_in_group
-    groundtruth_matrix[start:end, start:end] = 1
+def add_lag(seg_json):
+    return seg_json
+
+for seg_json in seg_json_list:
+    for i in range(num_ts_in_group):
+        seg_json = add_lag(seg_json)
+        lagged_seg_json_list.append(seg_json)
 
 full_path = save_path+dataset_name
 if not os.path.exists(full_path):
@@ -104,15 +105,35 @@ if not os.path.exists(full_path):
 if not os.path.exists(save_path+'state_seq_'+dataset_name):
     os.makedirs(save_path+'state_seq_'+dataset_name)
 
-i = 0
-for group in group_list:
-    for data in group:
-        df = pd.DataFrame(data).round(4)
-        df.to_csv(full_path+'/test'+str(i)+'.csv', header=False)
-        i += 1
+for i in tqdm.tqdm(range(num_group*num_ts_in_group)):
+    data = np.concatenate([gen_from_json(lagged_seg_json_list[i])])
+    np.save(full_path+'/test'+str(i), data)
+    # print(data.shape)
 
-np.save(save_path+'matrix_'+dataset_name+'.npy', groundtruth_matrix)
+# group_list = [generate_group(num_ts_in_group, seg_json) for seg_json in tqdm.tqdm(seg_json_list)]
 
-state_seq_list = [seg_to_label(seg_json) for seg_json in seg_json_list]
-for i, state_seq in enumerate(state_seq_list):
-    np.save(save_path+'state_seq_'+dataset_name+'/group'+str(i)+'.npy', state_seq)
+# width = num_ts_in_group * num_group
+# groundtruth_matrix = np.zeros(shape=(width, width))
+# for i in range(num_group):
+#     start = i*num_ts_in_group
+#     end = (i+1)*num_ts_in_group
+#     groundtruth_matrix[start:end, start:end] = 1
+
+# full_path = save_path+dataset_name
+# if not os.path.exists(full_path):
+#     os.makedirs(full_path)
+# if not os.path.exists(save_path+'state_seq_'+dataset_name):
+#     os.makedirs(save_path+'state_seq_'+dataset_name)
+
+# i = 0
+# for group in group_list:
+#     for data in group:
+#         df = pd.DataFrame(data).round(4)
+#         df.to_csv(full_path+'/test'+str(i)+'.csv', header=False)
+#         i += 1
+
+# np.save(save_path+'matrix_'+dataset_name+'.npy', groundtruth_matrix)
+
+# state_seq_list = [seg_to_label(seg_json) for seg_json in seg_json_list]
+# for i, state_seq in enumerate(state_seq_list):
+#     np.save(save_path+'state_seq_'+dataset_name+'/group'+str(i)+'.npy', state_seq)

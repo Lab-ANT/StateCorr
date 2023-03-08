@@ -15,7 +15,7 @@ num_group = 10
 num_ts_in_group = 10
 script_path = os.path.dirname(__file__)
 save_path = os.path.join(script_path, '../data/synthetic_data/')
-dataset_name = 'dataset3'
+dataset_name = 'dataset1'
 random_state = None
 length = 20000
 
