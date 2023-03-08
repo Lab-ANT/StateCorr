@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 import os
 from shape import RMDF
+import tqdm
 from TSpy.label import seg_to_label
 
 # configuration
@@ -16,31 +17,42 @@ script_path = os.path.dirname(__file__)
 save_path = os.path.join(script_path, '../data/synthetic_data/')
 dataset_name = 'dataset3'
 random_state = None
-
-# Generate segment json
 length = 20000
 
-def generate_seg_json(seg_len, state_num, random_state=None):
-    # Config seed to generate determinally.
-    if random_state is not None:
-        np.random.seed(random_state)
-    seg_json = {}
-    # maximum possible num of segments.
+def gen_seg_json(state_num, seg_len):
     seg_num = int(length/seg_len[0])
-    # generate random state num.
-    random_state_num = np.random.randint(low=state_num[0], high=state_num[1]+1)
     # generate state for each segment.
-    state_list = np.random.randint(random_state_num, size=seg_num)
-    while len(set(state_list)) != random_state_num:
-        state_list = np.random.randint(random_state_num, size=seg_num)
+    state_list = np.random.randint(state_num, size=seg_num)
+    # print(len(set(state_list)), state_num, state_list)
+    while len(set(state_list)) != state_num:
+        state_list = np.random.randint(state_num, size=seg_num)
     # generate length for each segment.
     seg_len_list = np.random.randint(low=seg_len[0], high=seg_len[1], size=seg_num)
+    seg_json = {}
     total_len = 0
     for i, state, rand_seg_len in zip(range(seg_num), state_list, seg_len_list):
         total_len += rand_seg_len
         if total_len>=length:
             total_len = length
+            seg_json[total_len]=state
+            break
         seg_json[total_len]=state
+    # print(state_num, seg_json)
+    return seg_json
+
+# Generate segment json
+def generate_seg_json(seg_len, state_num, random_state=None):
+    # Config seed to generate determinally.
+    if random_state is not None:
+        np.random.seed(random_state)
+    # generate random state num.
+    random_state_num = np.random.randint(low=state_num[0], high=state_num[1]+1)
+    # generate state for each segment.
+    seg_json = gen_seg_json(random_state_num, seg_len)
+    state_list = [seg_json[seg] for seg in seg_json]
+    while len(set(state_list)) != random_state_num:
+        seg_json = gen_seg_json(random_state_num, seg_len)
+        state_list = [seg_json[seg] for seg in seg_json]
     return seg_json
 
 def gen_channel_from_json(seg_json):
@@ -57,7 +69,6 @@ def gen_channel_from_json(seg_json):
     for state, seg_len in zip(state_list, seg_len_list):
         seg = [rmdf_list[state].gen(forking_depth=1, length=100) for i in range(10)]
         seg_list.append(np.concatenate(seg)[:seg_len])
-    # print(true_state_num)
     result = np.concatenate(seg_list)
     return result
 
@@ -78,7 +89,7 @@ for i in range(num_group):
     seg_json =generate_seg_json(seg_len, state_num, random_state)
     seg_json_list.append(seg_json)
 
-group_list = [generate_group(num_ts_in_group, seg_json) for seg_json in seg_json_list]
+group_list = [generate_group(num_ts_in_group, seg_json) for seg_json in tqdm.tqdm(seg_json_list)]
 
 width = num_ts_in_group * num_group
 groundtruth_matrix = np.zeros(shape=(width, width))
