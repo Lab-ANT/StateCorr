@@ -105,5 +105,3 @@ np.save(save_path+'matrix_'+dataset_name+'.npy', groundtruth_matrix)
 state_seq_list = [seg_to_label(seg_json) for seg_json in seg_json_list]
 for i, state_seq in enumerate(state_seq_list):
     np.save(save_path+'state_seq_'+dataset_name+'/group'+str(i)+'.npy', state_seq)
-
-# print(np.random.randint(low=4, high=8+1, size=100))

@@ -1,6 +1,5 @@
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
 import os
 import sys
 import tqdm
@@ -11,9 +10,15 @@ from Time2State.adapers import *
 from Time2State.clustering import *
 from Time2State.default_params import *
 
+use_data = 'dataset3'
+
 script_path = os.path.dirname(__file__)
-data_path = os.path.join(script_path, '../data/synthetic_data/dataset1/')
+data_path = os.path.join(script_path, '../data/synthetic_data/'+use_data)
 file_list = os.listdir(data_path)
+output_path = os.path.join(script_path, '../output/'+use_data+'/state_seq/')
+
+if not os.path.exists(output_path):
+    os.makedirs(output_path)
 
 win_size = 256
 step = 50
@@ -30,4 +35,4 @@ for file_name in tqdm.tqdm(file_list):
     df = pd.read_csv(os.path.join(data_path, file_name), header=None, index_col=0)
     data = df.to_numpy()
     t2s = Time2State(win_size, step, CausalConv_LSE_Adaper(params_LSE), DPGMM(None)).fit(data, win_size, step)
-    np.save('output/effectiveness_of_StateCorr/'+file_name[:-4]+'.npy', t2s.state_seq)
+    np.save(os.path.join(script_path, '../output/'+use_data+'/state_seq/'+file_name[:-4]+'.npy'), t2s.state_seq)

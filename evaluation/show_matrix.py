@@ -5,7 +5,7 @@ import os
 from sklearn.metrics import f1_score, precision_score, recall_score, precision_recall_curve, roc_curve
 import seaborn as sns
 
-use_data = 'dataset2'
+use_data = 'dataset3'
 
 def draw_boderline(X):
     for i in range(10):
