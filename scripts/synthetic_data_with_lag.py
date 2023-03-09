@@ -108,12 +108,30 @@ def add_lag(seg_json):
             new_seg_json[seg+lag] = seg_json[seg]
         new_seg_json[length] = seg_json[last_seg]
     # print(new_seg_json)
-    return seg_json
+    return seg_json, lag
 
+def calculate_lag_matrix(drift_array):
+    lag_matrix = np.ones((num_group*num_ts_in_group, num_group*num_ts_in_group))
+    for i in range(num_group*num_ts_in_group):
+        for j in range(num_group*num_ts_in_group):
+            if i==j:
+                lag_matrix[i,j]=0
+            elif i<j:
+                drift1 = drift_array[i]
+                drift2 = drift_array[j]
+                if drift1>=0 and drift2>=0:
+                    lag = abs(drift1)
+                lag_matrix[i,j]=0
+                lag_matrix[j,i]=0
+
+drift_array = []
 for seg_json in seg_json_list:
     for i in range(num_ts_in_group):
-        seg_json = add_lag(seg_json)
+        seg_json, drift = add_lag(seg_json)
+        drift_array.append(drift)
         lagged_seg_json_list.append(seg_json)
+
+lag_matrix = calculate_lag_matrix(np.array(drift_array))
 
 full_path = save_path+dataset_name
 if not os.path.exists(full_path):
@@ -126,31 +144,3 @@ for i in tqdm.tqdm(range(num_group*num_ts_in_group)):
     state_seq = seg_to_label(lagged_seg_json_list[i])
     np.save(full_path+'/test'+str(i), data)
     np.save(save_path+'state_seq_'+dataset_name+'/test'+str(i), state_seq)
-
-# group_list = [generate_group(num_ts_in_group, seg_json) for seg_json in tqdm.tqdm(seg_json_list)]
-
-# width = num_ts_in_group * num_group
-# groundtruth_matrix = np.zeros(shape=(width, width))
-# for i in range(num_group):
-#     start = i*num_ts_in_group
-#     end = (i+1)*num_ts_in_group
-#     groundtruth_matrix[start:end, start:end] = 1
-
-# full_path = save_path+dataset_name
-# if not os.path.exists(full_path):
-#     os.makedirs(full_path)
-# if not os.path.exists(save_path+'state_seq_'+dataset_name):
-#     os.makedirs(save_path+'state_seq_'+dataset_name)
-
-# i = 0
-# for group in group_list:
-#     for data in group:
-#         df = pd.DataFrame(data).round(4)
-#         df.to_csv(full_path+'/test'+str(i)+'.csv', header=False)
-#         i += 1
-
-# np.save(save_path+'matrix_'+dataset_name+'.npy', groundtruth_matrix)
-
-# state_seq_list = [seg_to_label(seg_json) for seg_json in seg_json_list]
-# for i, state_seq in enumerate(state_seq_list):
-#     np.save(save_path+'state_seq_'+dataset_name+'/group'+str(i)+'.npy', state_seq)
