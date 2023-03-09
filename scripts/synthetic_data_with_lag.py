@@ -67,7 +67,7 @@ def gen_channel_from_json(seg_json):
         rmdf.gen_anchor()
     seg_list = []
     for state, seg_len in zip(state_list, seg_len_list):
-        seg = [rmdf_list[state].gen(forking_depth=1, length=100) for i in range(10)]
+        seg = [rmdf_list[state].gen(forking_depth=1, length=100) for i in range(15)]
         seg_list.append(np.concatenate(seg)[:seg_len])
     result = np.concatenate(seg_list)
     return result
@@ -76,13 +76,6 @@ def gen_from_json(seg_json):
     # generate channel respectively.
     channel_list = [gen_channel_from_json(seg_json) for i in range(channel_num)]
     return np.stack(channel_list).T
-
-def generate_group(num_ts_in_group, seg_json):
-    data_list = []
-    for i in range(num_ts_in_group):
-        data = np.concatenate([gen_from_json(seg_json)])
-        data_list.append(data)
-    return data_list
 
 seg_json_list = []
 for i in range(num_group):
@@ -125,7 +118,7 @@ lagged_seg_json_list = []
 for seg_json in seg_json_list:
     for i in range(num_ts_in_group):
         lagged_seg_json, drift = add_lag(seg_json)
-        print(lagged_seg_json, drift)
+        # print(lagged_seg_json, drift)
         drift_array.append(drift)
         lagged_seg_json_list.append(lagged_seg_json)
 
