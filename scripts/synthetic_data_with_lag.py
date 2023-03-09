@@ -11,11 +11,11 @@ channel_num = 4
 # seg_num = 20
 seg_len = [500, 1000] # 200~1000
 state_num = [4, 8] # 4~8
-num_group = 10
-num_ts_in_group = 10
+num_group = 20
+num_ts_in_group = 1
 script_path = os.path.dirname(__file__)
 save_path = os.path.join(script_path, '../data/synthetic_data/')
-dataset_name = 'dataset4'
+dataset_name = 'dataset5'
 random_state = None
 length = 20000
 
@@ -92,7 +92,7 @@ for i in range(num_group):
 lagged_seg_json_list = []
 
 def add_lag(seg_json):
-    lag = np.random.randint(low=-500, high=500)
+    lag = np.random.randint(low=-1000, high=1000)
     # lag = 1500
     new_seg_json = {}
     if lag >=0:
@@ -119,10 +119,10 @@ def calculate_lag_matrix(drift_array):
             elif i<j:
                 drift1 = drift_array[i]
                 drift2 = drift_array[j]
-                if drift1>=0 and drift2>=0:
-                    lag = abs(drift1)
-                lag_matrix[i,j]=0
-                lag_matrix[j,i]=0
+                lag = drift2-drift1
+                lag_matrix[i,j]=lag
+                lag_matrix[j,i]=-lag
+    return lag_matrix
 
 drift_array = []
 for seg_json in seg_json_list:
@@ -144,3 +144,4 @@ for i in tqdm.tqdm(range(num_group*num_ts_in_group)):
     state_seq = seg_to_label(lagged_seg_json_list[i])
     np.save(full_path+'/test'+str(i), data)
     np.save(save_path+'state_seq_'+dataset_name+'/test'+str(i), state_seq)
+np.save(save_path+'lag_matrix_'+dataset_name, lag_matrix)

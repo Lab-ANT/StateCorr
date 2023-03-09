@@ -2,7 +2,7 @@ import numpy as np
 import os
 from TSpy.corr import state_correlation, lagged_state_correlation
 
-use_data = 'dataset4'
+use_data = 'dataset5'
 
 script_path = os.path.dirname(__file__)
 data_path = os.path.join(script_path, '../output/'+use_data+'/')
@@ -13,7 +13,7 @@ if not os.path.exists(data_path+'matrix'):
 
 state_seq_list = []
 
-for i in range(100):
+for i in range(20):
     state_seq = np.load(true_state_seq_path+'test'+str(i)+'.npy')
     state_seq_list.append(state_seq)
 
@@ -21,7 +21,7 @@ true_matrix = state_correlation(state_seq_list)
 np.save(os.path.join(script_path, '../output/'+use_data+'/matrix/true_matrix.npy'),true_matrix)
 
 state_seq_array = []
-for i in range(100):
+for i in range(20):
     state_seq = np.load(os.path.join(data_path, 'state_seq/test'+str(i)+'.npy'))
     state_seq_array.append(state_seq)
 

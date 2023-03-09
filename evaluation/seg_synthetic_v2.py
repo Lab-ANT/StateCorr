@@ -10,7 +10,7 @@ from Time2State.adapers import *
 from Time2State.clustering import *
 from Time2State.default_params import *
 
-use_data = 'dataset4'
+use_data = 'dataset5'
 
 script_path = os.path.dirname(__file__)
 data_path = os.path.join(script_path, '../data/synthetic_data/'+use_data)
@@ -21,7 +21,7 @@ if not os.path.exists(output_path):
     os.makedirs(output_path)
 
 win_size = 256
-step = 100
+step = 20
 
 params_LSE['in_channels'] = 4
 params_LSE['M'] = 10
