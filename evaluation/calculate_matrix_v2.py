@@ -13,9 +13,13 @@ if not os.path.exists(data_path+'matrix'):
 
 state_seq_list = []
 
+import matplotlib.pyplot as plt
+
 for i in range(20):
     state_seq = np.load(true_state_seq_path+'test'+str(i)+'.npy')
     state_seq_list.append(state_seq)
+    plt.plot(state_seq)
+plt.savefig('state.png')
 
 true_matrix = state_correlation(state_seq_list)
 np.save(os.path.join(script_path, '../output/'+use_data+'/matrix/true_matrix.npy'),true_matrix)

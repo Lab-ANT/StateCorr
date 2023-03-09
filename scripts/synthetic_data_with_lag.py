@@ -11,8 +11,8 @@ channel_num = 4
 # seg_num = 20
 seg_len = [500, 1000] # 200~1000
 state_num = [4, 8] # 4~8
-num_group = 20
-num_ts_in_group = 1
+num_group = 1
+num_ts_in_group = 20
 script_path = os.path.dirname(__file__)
 save_path = os.path.join(script_path, '../data/synthetic_data/')
 dataset_name = 'dataset5'
@@ -89,11 +89,8 @@ for i in range(num_group):
     seg_json = generate_seg_json(seg_len, state_num, random_state)
     seg_json_list.append(seg_json)
 
-lagged_seg_json_list = []
-
 def add_lag(seg_json):
-    lag = np.random.randint(low=-1000, high=1000)
-    # lag = 1500
+    lag = np.random.randint(low=-500, high=500)
     new_seg_json = {}
     if lag >=0:
         for seg in list(seg_json):
@@ -107,8 +104,7 @@ def add_lag(seg_json):
         for seg in list(seg_json)[:-1]:
             new_seg_json[seg+lag] = seg_json[seg]
         new_seg_json[length] = seg_json[last_seg]
-    # print(new_seg_json)
-    return seg_json, lag
+    return new_seg_json, lag
 
 def calculate_lag_matrix(drift_array):
     lag_matrix = np.ones((num_group*num_ts_in_group, num_group*num_ts_in_group))
@@ -125,13 +121,18 @@ def calculate_lag_matrix(drift_array):
     return lag_matrix
 
 drift_array = []
+lagged_seg_json_list = []
 for seg_json in seg_json_list:
     for i in range(num_ts_in_group):
-        seg_json, drift = add_lag(seg_json)
+        lagged_seg_json, drift = add_lag(seg_json)
+        print(lagged_seg_json, drift)
         drift_array.append(drift)
-        lagged_seg_json_list.append(seg_json)
+        lagged_seg_json_list.append(lagged_seg_json)
 
 lag_matrix = calculate_lag_matrix(np.array(drift_array))
+
+# for lagged_json in lagged_seg_json_list:
+#     print(lagged_json)
 
 full_path = save_path+dataset_name
 if not os.path.exists(full_path):
@@ -141,6 +142,7 @@ if not os.path.exists(save_path+'state_seq_'+dataset_name):
 
 for i in tqdm.tqdm(range(num_group*num_ts_in_group)):
     data = np.concatenate([gen_from_json(lagged_seg_json_list[i])])
+    print(data.shape)
     state_seq = seg_to_label(lagged_seg_json_list[i])
     np.save(full_path+'/test'+str(i), data)
     np.save(save_path+'state_seq_'+dataset_name+'/test'+str(i), state_seq)

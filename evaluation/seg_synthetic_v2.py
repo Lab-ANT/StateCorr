@@ -21,7 +21,7 @@ if not os.path.exists(output_path):
     os.makedirs(output_path)
 
 win_size = 256
-step = 20
+step = 50
 
 params_LSE['in_channels'] = 4
 params_LSE['M'] = 10
