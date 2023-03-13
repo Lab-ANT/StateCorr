@@ -26,20 +26,18 @@ def score(X,Y):
     new = Y[np.argwhere(X==1)]
     p_y_given_x = np.count_nonzero(new)/len(new)
     # return np.log(1)
-    scores = p_xy*np.log(p_y_given_x/p_x)
+    # scores = p_xy*np.log(p_y_given_x/p_x)
+    scores = p_xy*p_y_given_x/p_x
     print(p_x, p_xy, p_y_given_x, scores)
     return scores
 
-score(np.array([0,0,0,1,1,0,0]), np.array([0,0,0,0,1,0,0]))
+score(np.array([0,0,0,1,1,0,0]), np.array([0,0,0,1,1,0,0]))
 
-state_seq_array = []
-for i in range(20):
+decomposed_state_seq_list = []
+for i in range(2):
     state_seq = np.load(os.path.join(data_path, 'state_seq/test'+str(i)+'.npy'))
-    state_set = decompose_state_seq(state_seq)
-    # state_seq_array.append(state_seq)
-    # print(state_seq)
+    decomposed_state_seq_list.append(decompose_state_seq(state_seq))
 
-# for i in range(20):
-#     state_seq = np.load(true_state_seq_path+'test'+str(i)+'.npy')
-#     state_set = decompose_state_seq(state_seq)
-#     print(state_set.shape)
+for sseq1 in decomposed_state_seq_list[0]:
+    for sseq2 in decomposed_state_seq_list[1]:
+        score(sseq1, sseq2)
