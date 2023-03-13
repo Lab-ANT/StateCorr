@@ -23,7 +23,7 @@ def add_lag(X, Y, lag):
 def decompose_state_seq(X):
     state_set = set(X)
     # return state_set
-    print(state_set)
+    # print(state_set)
     single_state_seq_list = []
     for state in list(state_set):
         single_state_seq = np.zeros(X.shape, dtype=int)
@@ -54,29 +54,37 @@ def partial_state_corr(X,Y):
             score_matrix[i,j] = Jscore
     return score_matrix
 
-# def match_label(X, Y, score_matrix):
-#     print(score_matrix)
-#     height, width = score_matrix.shape
-#     print(height, width)
-#     idx = np.argmax(score_matrix)
-#     if idx%width==0:
-#         row = int(idx/width)-1
-#         col = width-1
-#     else:
-#         row = int(idx/width)
-#         col = idx%width
-#     # print(idx, row, col)
-#     return X, Y
-
-def match_label(X, Y, score_matrix):
-    print(score_matrix)
+def find_best_match(X, Y, score_matrix):
+    # print(score_matrix)
+    matched_pair = []
     height, width = score_matrix.shape
     for i in range(height):
-        idx = np.argmax(score_matrix[i,:])
-        print(idx)
-        adjust_idx = np.argwhere(Y==idx)
-        Y[adjust_idx] = i
-    return X, Y
+        row, col = np.unravel_index(np.argmax(score_matrix), score_matrix.shape)
+        score_matrix[row,:] = 0
+        score_matrix[:,col] = 0
+        if np.sum(score_matrix)==0:
+            break
+        print(score_matrix, row, col)
+        matched_pair.append((row, col))
+    new_X = X.copy()+10
+    new_Y = Y.copy()+10
+    color = 0
+    for i,j in matched_pair:
+        new_X[np.argwhere(new_X==i)]=color
+        new_Y[np.argwhere(new_Y==j)]=color
+        color+=1
+    return new_X, new_Y
+
+# # Find best match for all states.
+# def find_best_match(X, Y, score_matrix):
+#     print(score_matrix)
+#     height, width = score_matrix.shape
+#     new_Y = np.zeros(Y.shape)
+#     for i in range(height):
+#         idx = np.argmax(score_matrix[i,:])
+#         adjust_idx = np.argwhere(Y==idx)
+#         new_Y[adjust_idx] = i
+#     return X, new_Y
 
 def lagged_partial_state_corr(X, Y):
     listX = decompose_state_seq(X)
@@ -92,15 +100,16 @@ def lagged_partial_state_corr(X, Y):
 
 score(np.array([0,0,0,1,1,0,0]), np.array([0,0,0,1,1,0,0]))
 
+from TSpy.label import reorder_label
 state_seq_list = []
 for i in range(20):
     state_seq = np.load(os.path.join(data_path, 'state_seq/test'+str(i)+'.npy'))
-    state_seq_list.append(state_seq)
+    state_seq_list.append(reorder_label(state_seq))
 
 matrix = partial_state_corr(state_seq_list[0], state_seq_list[2])
 # print(np.round(matrix, 2))
 matrix = np.round(matrix, 2)
-X, Y = match_label(state_seq_list[0], state_seq_list[2], matrix)
+X, Y = find_best_match(state_seq_list[0], state_seq_list[2], matrix)
 
 import matplotlib.pyplot as plt
 fig, ax = plt.subplots(nrows=2)
@@ -109,3 +118,8 @@ ax[1].imshow(Y.reshape(-1,1).T, aspect='auto', cmap='tab20c', interpolation='nea
 ax[0].set_ylim([-0.5,0.5])
 ax[1].set_ylim([-0.5,0.5])
 plt.savefig('partial.png')
+
+# x = np.array([1,1,1,2,3])
+# y = x.copy()
+# x[0]=2
+# print(x,y)
