@@ -37,13 +37,24 @@ def score(X,Y):
     p_xy = np.sum((X+Y)==2)/length
     new = Y[np.argwhere(X==1)]
     p_y_given_x = np.count_nonzero(new)/len(new)
-    # return np.log(1)
     # scores = p_xy*np.log(p_y_given_x/p_x)
     scores = p_xy*p_y_given_x/p_x
     # print(p_x, p_xy, p_y_given_x, scores)
     return scores
 
 def partial_state_corr(X,Y):
+    listX = decompose_state_seq(X)
+    listY = decompose_state_seq(Y)
+    score_matrix = np.zeros((len(listX),len(listY)))
+    for i in range(len(listX)):
+        for j in range(len(listY)):
+            sssX = listX[i]
+            sssY = listY[j]
+            Jscore = score(sssX, sssY)
+            score_matrix[i,j] = Jscore
+    return score_matrix
+
+def lagged_partial_state_corr(X, Y):
     listX = decompose_state_seq(X)
     listY = decompose_state_seq(Y)
     score_matrix = np.zeros((len(listX),len(listY)))
