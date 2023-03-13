@@ -54,6 +54,30 @@ def partial_state_corr(X,Y):
             score_matrix[i,j] = Jscore
     return score_matrix
 
+# def match_label(X, Y, score_matrix):
+#     print(score_matrix)
+#     height, width = score_matrix.shape
+#     print(height, width)
+#     idx = np.argmax(score_matrix)
+#     if idx%width==0:
+#         row = int(idx/width)-1
+#         col = width-1
+#     else:
+#         row = int(idx/width)
+#         col = idx%width
+#     # print(idx, row, col)
+#     return X, Y
+
+def match_label(X, Y, score_matrix):
+    print(score_matrix)
+    height, width = score_matrix.shape
+    for i in range(height):
+        idx = np.argmax(score_matrix[i,:])
+        print(idx)
+        adjust_idx = np.argwhere(Y==idx)
+        Y[adjust_idx] = i
+    return X, Y
+
 def lagged_partial_state_corr(X, Y):
     listX = decompose_state_seq(X)
     listY = decompose_state_seq(Y)
@@ -69,13 +93,19 @@ def lagged_partial_state_corr(X, Y):
 score(np.array([0,0,0,1,1,0,0]), np.array([0,0,0,1,1,0,0]))
 
 state_seq_list = []
-for i in range(2):
+for i in range(20):
     state_seq = np.load(os.path.join(data_path, 'state_seq/test'+str(i)+'.npy'))
     state_seq_list.append(state_seq)
 
-matrix = partial_state_corr(state_seq_list[0], state_seq_list[1])
-print(np.round(matrix, 2))
+matrix = partial_state_corr(state_seq_list[0], state_seq_list[2])
+# print(np.round(matrix, 2))
+matrix = np.round(matrix, 2)
+X, Y = match_label(state_seq_list[0], state_seq_list[2], matrix)
 
 import matplotlib.pyplot as plt
-plt.imshow(matrix)
+fig, ax = plt.subplots(nrows=2)
+ax[0].imshow(X.reshape(-1,1).T, aspect='auto', cmap='tab20c', interpolation='nearest',)
+ax[1].imshow(Y.reshape(-1,1).T, aspect='auto', cmap='tab20c', interpolation='nearest',)
+ax[0].set_ylim([-0.5,0.5])
+ax[1].set_ylim([-0.5,0.5])
 plt.savefig('partial.png')
