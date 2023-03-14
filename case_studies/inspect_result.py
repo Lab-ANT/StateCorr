@@ -63,13 +63,13 @@ def find_best_match(X, Y, score_matrix):
     print(compact(X), compact(Y))
     print(matched_pair)
     new_X = X.copy()
-    new_Y = Y.copy()+10
+    new_Y = Y.copy()+4
     # color = 0
     for i,j in matched_pair:
         # new_X[np.argwhere(X==i)]=color
         new_Y[np.argwhere(Y==j)]=i
         # color+=1
-    new_Y[new_Y>=10]=-1
+    # new_Y[new_Y>=10]=-1
     # print(set(new_X), set(new_Y))
     print(compact(new_X), compact(new_Y))
     print('========================')
@@ -102,7 +102,7 @@ def find_top_k(id, k):
         state_seq = state_seq.reshape(1,-1)
         state_seq = np.concatenate([state_seq, state_seq])
         # ax[i].plot(exclude_outlier(data_), color= '#348ABC')
-        ax[i].imshow(state_seq, aspect='auto', cmap='tab20c', interpolation='nearest', alpha=0.5, origin='lower', vmax=5, vmin=0)
+        ax[i].imshow(state_seq, aspect='auto', cmap='tab20c', interpolation='nearest', alpha=0.6, origin='lower', vmax=5, vmin=0)
         ax[i].plot(data_, lw=0.5)
         ax[i].set_ylim([-0.1,1.1])
     plt.tight_layout()

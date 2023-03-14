@@ -58,22 +58,50 @@ def find_best_match(X, Y, score_matrix):
     # print(score_matrix)
     matched_pair = []
     height, width = score_matrix.shape
-    for i in range(height):
+    for i in range(min(height, width)):
         row, col = np.unravel_index(np.argmax(score_matrix), score_matrix.shape)
+        matched_pair.append((row, col))
+        # print(score_matrix, row, col)
         score_matrix[row,:] = 0
         score_matrix[:,col] = 0
         if np.sum(score_matrix)==0:
             break
-        print(score_matrix, row, col)
-        matched_pair.append((row, col))
-    new_X = X.copy()+10
+    # print(set(X), set(Y))
+    # print(compact(X), compact(Y))
+    # print(matched_pair)
+    new_X = X.copy()
     new_Y = Y.copy()+10
-    color = 0
+    # color = 0
     for i,j in matched_pair:
-        new_X[np.argwhere(new_X==i)]=color
-        new_Y[np.argwhere(new_Y==j)]=color
-        color+=1
-    return new_X, new_Y
+        # new_X[np.argwhere(X==i)]=color
+        new_Y[np.argwhere(Y==j)]=i
+        # color+=1
+    new_Y[new_Y>=10]=-1
+    # print(set(new_X), set(new_Y))
+    # print(compact(new_X), compact(new_Y))
+    # print('========================')
+    return X, new_Y
+
+# def find_best_match(X, Y, score_matrix):
+#     # print(score_matrix)
+#     matched_pair = []
+#     height, width = score_matrix.shape
+#     for i in range(height):
+#         row, col = np.unravel_index(np.argmax(score_matrix), score_matrix.shape)
+#         score_matrix[row,:] = 0
+#         score_matrix[:,col] = 0
+#         if np.sum(score_matrix)==0:
+#             break
+#         print(score_matrix, row, col)
+#         matched_pair.append((row, col))
+#     new_X = X.copy()+10
+#     new_Y = Y.copy()+10
+#     color = 0
+#     for i,j in matched_pair:
+#         new_X[np.argwhere(new_X==i)]=color
+#         new_Y[np.argwhere(new_Y==j)]=color
+#         color+=1
+#     return new_X, new_Y
 
 # # Find best match for all states.
 # def find_best_match(X, Y, score_matrix):
@@ -113,8 +141,8 @@ X, Y = find_best_match(state_seq_list[0], state_seq_list[2], matrix)
 
 import matplotlib.pyplot as plt
 fig, ax = plt.subplots(nrows=2)
-ax[0].imshow(X.reshape(-1,1).T, aspect='auto', cmap='tab20c', interpolation='nearest',)
-ax[1].imshow(Y.reshape(-1,1).T, aspect='auto', cmap='tab20c', interpolation='nearest',)
+ax[0].imshow(X.reshape(-1,1).T, aspect='auto', cmap='tab20c', interpolation='nearest',vmax=8, vmin=0)
+ax[1].imshow(Y.reshape(-1,1).T, aspect='auto', cmap='tab20c', interpolation='nearest',vmax=8, vmin=0)
 ax[0].set_ylim([-0.5,0.5])
 ax[1].set_ylim([-0.5,0.5])
 plt.savefig('partial.png')
