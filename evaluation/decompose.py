@@ -54,7 +54,7 @@ def partial_state_corr(X,Y):
             score_matrix[i,j] = Jscore
     return score_matrix
 
-def find_best_match(X, Y, score_matrix):
+def find_unique_best_match(X, Y, score_matrix):
     # print(score_matrix)
     matched_pair = []
     height, width = score_matrix.shape
@@ -82,39 +82,18 @@ def find_best_match(X, Y, score_matrix):
     # print('========================')
     return X, new_Y
 
-# def find_best_match(X, Y, score_matrix):
-#     # print(score_matrix)
-#     matched_pair = []
-#     height, width = score_matrix.shape
-#     for i in range(height):
-#         row, col = np.unravel_index(np.argmax(score_matrix), score_matrix.shape)
-#         score_matrix[row,:] = 0
-#         score_matrix[:,col] = 0
-#         if np.sum(score_matrix)==0:
-#             break
-#         print(score_matrix, row, col)
-#         matched_pair.append((row, col))
-#     new_X = X.copy()+10
-#     new_Y = Y.copy()+10
-#     color = 0
-#     for i,j in matched_pair:
-#         new_X[np.argwhere(new_X==i)]=color
-#         new_Y[np.argwhere(new_Y==j)]=color
-#         color+=1
-#     return new_X, new_Y
+# Find best match for all states.
+def find_best_match(X, Y, score_matrix):
+    print(score_matrix)
+    height, width = score_matrix.shape
+    new_Y = np.zeros(Y.shape)
+    for i in range(height):
+        idx = np.argmax(score_matrix[i,:])
+        adjust_idx = np.argwhere(Y==idx)
+        new_Y[adjust_idx] = i
+    return X, new_Y
 
-# # Find best match for all states.
-# def find_best_match(X, Y, score_matrix):
-#     print(score_matrix)
-#     height, width = score_matrix.shape
-#     new_Y = np.zeros(Y.shape)
-#     for i in range(height):
-#         idx = np.argmax(score_matrix[i,:])
-#         adjust_idx = np.argwhere(Y==idx)
-#         new_Y[adjust_idx] = i
-#     return X, new_Y
-
-def lagged_partial_state_corr(X, Y):
+def lagged_partial_state_corr(X, Y, atom_step, max_ratio):
     listX = decompose_state_seq(X)
     listY = decompose_state_seq(Y)
     score_matrix = np.zeros((len(listX),len(listY)))
@@ -122,11 +101,10 @@ def lagged_partial_state_corr(X, Y):
         for j in range(len(listY)):
             sssX = listX[i]
             sssY = listY[j]
+            add_lag(sssX, sssY, )
             Jscore = score(sssX, sssY)
             score_matrix[i,j] = Jscore
     return score_matrix
-
-score(np.array([0,0,0,1,1,0,0]), np.array([0,0,0,1,1,0,0]))
 
 from TSpy.label import reorder_label
 state_seq_list = []
