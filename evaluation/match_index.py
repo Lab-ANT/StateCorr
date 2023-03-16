@@ -31,7 +31,7 @@ def lagged_partial_state_corr(X, Y, atom_step=0.001, max_ratio=0.05):
                 if Jscore>=max_score:
                     max_score=Jscore
                     lag=lag_len
-            score_matrix[i,j] = Jscore
+            score_matrix[i,j] = max_score
     print(np.round(score_matrix, 2))
     return score_matrix, None
 
@@ -41,8 +41,8 @@ def find_match(X, Y, score_matrix):
     for i in range(min(height, width)):
         row, col = np.unravel_index(np.argmax(score_matrix), score_matrix.shape)
         # matched_pair.append((row, col))
-        # matched_pair[row]=col
         matched_pair[col]=row
+        # matched_pair[col]=row
         score_matrix[row,:] = 0
         score_matrix[:,col] = 0
         if np.sum(score_matrix)==0:
@@ -51,6 +51,7 @@ def find_match(X, Y, score_matrix):
 
 def match_index(groundtruth,prediction):
     score_matrix = partial_state_corr(groundtruth, prediction)
+    # print(np.round(score_matrix, 2))
     matched_pair = find_match(groundtruth, prediction, score_matrix)
     # print(matched_pair)
     return matched_pair
@@ -82,7 +83,8 @@ for i in range(2):
         print(matched_list[i], matched_list[j])
         retrieve_relation(matrix, matched_list[i], matched_list[j])
 
-gt = [(0,0),(1,1),(2,2),(3,3),(4,4),(5,5),(6,6)]
+# gt = [(0,0),(1,1),(2,2),(3,3),(4,4),(5,5),(6,6)]
+
 # for i in range(2):
 #     # groundtruth = np.load(true_state_seq_path+'test'+str(i)+'.npy')
 #     prediction = np.load(os.path.join(data_path, 'state_seq/test'+str(i)+'.npy'))
