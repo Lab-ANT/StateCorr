@@ -32,7 +32,7 @@ def lagged_partial_state_corr(X, Y, atom_step=0.001, max_ratio=0.05):
                     max_score=Jscore
                     lag=lag_len
             score_matrix[i,j] = max_score
-    print(np.round(score_matrix, 2))
+    # print(np.round(score_matrix, 2))
     return score_matrix, None
 
 def find_match(X, Y, score_matrix):
@@ -42,7 +42,6 @@ def find_match(X, Y, score_matrix):
         row, col = np.unravel_index(np.argmax(score_matrix), score_matrix.shape)
         # matched_pair.append((row, col))
         matched_pair[col]=row
-        # matched_pair[col]=row
         score_matrix[row,:] = 0
         score_matrix[:,col] = 0
         if np.sum(score_matrix)==0:
@@ -60,30 +59,53 @@ def retrieve_relation(matrix, x, y):
     relation_set = []
     for i in range(matrix.shape[0]):
         idx = np.argmax(matrix[i,:])
-        # relation_set.append((x[i],y[idx]))
-        relation_set.append((i,idx))
-    print(relation_set)
+        if i in x and idx in y:
+            relation_set.append((x[i],y[idx]))
+        else:
+            relation_set.append((i,idx))
+    # print(relation_set)
+    return relation_set
 
 prediction_list = []
 matched_list = []
 
 from TSpy.label import reorder_label
-for i in range(2):
+for i in range(4):
     groundtruth = reorder_label(np.load(true_state_seq_path+'test'+str(i)+'.npy'))
     prediction = reorder_label(np.load(os.path.join(data_path, 'state_seq/test'+str(i)+'.npy')))
     matched_pairs = match_index(groundtruth, prediction)
     matched_list.append(matched_pairs)
     prediction_list.append(prediction)
 
-for i in range(2):
-    for j in range(2):
+gt = [(0,0),(1,1),(2,2),(3,3),(4,4),(5,5),(6,6)]
+
+def calculate_f1(G,P):
+    U = list(set(G+P))
+    TP, FP, FN = 0,0,0
+    # print(U)
+    for r in U:
+        if r in G and r in P:
+            TP+=1
+        elif r in G and r not in P:
+            FN+=1
+        elif r in P and r not in G:
+            FP+=1
+    recall=TP/(TP+FN)
+    precision=TP/(TP+FP)
+    f1=2*recall*precision/(recall+precision)
+    print(f1, recall, precision)
+
+
+
+for i in range(4):
+    for j in range(4):
         if i<j:
             continue
         matrix, lag_matrix = lagged_partial_state_corr(prediction_list[i], prediction_list[j])
-        print(matched_list[i], matched_list[j])
-        retrieve_relation(matrix, matched_list[i], matched_list[j])
+        # print(matched_list[i], matched_list[j])
+        prediction = retrieve_relation(matrix, matched_list[i], matched_list[j])
+        calculate_f1(gt, prediction)
 
-# gt = [(0,0),(1,1),(2,2),(3,3),(4,4),(5,5),(6,6)]
 
 # for i in range(2):
 #     # groundtruth = np.load(true_state_seq_path+'test'+str(i)+'.npy')
