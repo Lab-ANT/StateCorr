@@ -4,6 +4,7 @@ import numpy as np
 import os
 from TSpy.corr import decompose_state_seq, add_lag, score, partial_state_corr
 from TSpy.label import reorder_label
+import matplotlib.pyplot as plt
 
 use_data = 'dataset5'
 
@@ -15,6 +16,11 @@ figure_output_path = os.path.join(script_path, '../output/figs')
 num = 3
 if not os.path.exists(data_path+'matrix'):
     os.makedirs(data_path+'matrix')
+
+# def score2(X,Y):
+#     len_x_or_y = np.count_nonzero(X)
+#     len_x_and_y = np.sum((X+Y)==2)  
+#     return len_x_and_y/len_x_or_y
 
 def lagged_partial_state_corr(X, Y, atom_step=0.001, max_ratio=0.05):
     length = len(X)
@@ -75,7 +81,7 @@ def match_matrix(matrix, x, y):
     new_matrix = matrix.copy()
     pre=[i for i in x]
     post=[x[i] for i in pre]
-    print(pre,post,x)
+    # print(pre,post,x)
     new_matrix[pre,:] = new_matrix[post,:]
     pre=[i for i in y]
     post=[y[i] for i in pre]
@@ -86,16 +92,18 @@ prediction_list = []
 matched_list = []
 gt_list = []
 
-# data = np.ones((5,5))
-# data[1:3,:]=0
-# print(data)
+fig, ax = plt.subplots(nrows=num*2)
 for i in range(num):
     groundtruth = reorder_label(np.load(true_state_seq_path+'test'+str(i)+'.npy'))
     gt_list.append([(s,s) for s in range(len(set(groundtruth)))])
     prediction = reorder_label(np.load(os.path.join(data_path, 'state_seq/test'+str(i)+'.npy')))
+    ax[i*2].imshow(groundtruth.reshape(-1,1).T, aspect='auto', cmap='tab20c', interpolation='nearest')
+    ax[i*2+1].imshow(prediction.reshape(-1,1).T, aspect='auto', cmap='tab20c', interpolation='nearest')
     matched_pairs = match_index(groundtruth, prediction)
     matched_list.append(matched_pairs)
     prediction_list.append(prediction)
+
+plt.savefig(os.path.join(figure_output_path,'seg.png'))
 
 def calculate_f1(G,P):
     U = list(set(G+P))
@@ -124,7 +132,7 @@ for i in range(num):
         if i<=j:
             continue
         matrix, lag_matrix = lagged_partial_state_corr(prediction_list[i], prediction_list[j])
-        # matrix = match_matrix(matrix, matched_list[i], matched_list[j])
+        matrix = match_matrix(matrix, matched_list[i], matched_list[j])
         p_matrix_list.append(matrix)
         lag_matrix_list.append(lag_matrix)
         prediction = retrieve_relation(matrix, matched_list[i], matched_list[j])
@@ -151,7 +159,6 @@ for matrix,lagmat in zip(p_matrix_list, lag_matrix_list):
     start_col+=max(matrix.shape[0],matrix.shape[1])
 
 from sklearn.metrics import precision_recall_curve, roc_curve
-import matplotlib.pyplot as plt
 # fpr, tpr, thread = roc_curve(groundtruth.flatten(), prediction.flatten())
 fpr, tpr, thread = precision_recall_curve(groundtruth.flatten(), prediction.flatten())
 fig, ax = plt.subplots(ncols=3, figsize=(9,3))
