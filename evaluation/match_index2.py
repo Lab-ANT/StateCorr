@@ -154,7 +154,7 @@ from sklearn.metrics import precision_recall_curve, roc_curve
 import matplotlib.pyplot as plt
 # fpr, tpr, thread = roc_curve(groundtruth.flatten(), prediction.flatten())
 fpr, tpr, thread = precision_recall_curve(groundtruth.flatten(), prediction.flatten())
-fig, ax = plt.subplots(ncols=3)
+fig, ax = plt.subplots(ncols=3, figsize=(9,3))
 ax[0].imshow(groundtruth)
 ax[1].imshow(prediction)
 ax[2].imshow(lag)
