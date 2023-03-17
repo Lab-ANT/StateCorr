@@ -1,13 +1,18 @@
+import json
+from turtle import width
 import numpy as np
 import os
 from TSpy.corr import decompose_state_seq, add_lag, score, partial_state_corr
+from TSpy.label import reorder_label
 
 use_data = 'dataset5'
 
 script_path = os.path.dirname(__file__)
 data_path = os.path.join(script_path, '../output/'+use_data+'/')
 true_state_seq_path = os.path.join(script_path, '../data/synthetic_data/state_seq_'+use_data+'/')
+figure_output_path = os.path.join(script_path, '../output/figs')
 
+num = 4
 if not os.path.exists(data_path+'matrix'):
     os.makedirs(data_path+'matrix')
 
@@ -50,36 +55,43 @@ def find_match(X, Y, score_matrix):
 
 def match_index(groundtruth,prediction):
     score_matrix = partial_state_corr(groundtruth, prediction)
-    # print(np.round(score_matrix, 2))
     matched_pair = find_match(groundtruth, prediction, score_matrix)
-    # print(matched_pair)
     return matched_pair
 
 def retrieve_relation(matrix, x, y):
     relation_set = []
     for i in range(matrix.shape[0]):
         idx = np.argmax(matrix[i,:])
+        # relation_set.append((i,idx))
         if i in x and idx in y:
             relation_set.append((x[i],y[idx]))
         else:
             relation_set.append((i,idx))
-    # print(relation_set)
     return relation_set
+
+def match_matrix(matrix, x, y):
+    # print(x,y)
+    new_matrix = matrix.copy()
+    pre=[i for i in x]
+    post=[x[i] for i in pre]
+    print(pre,post,x)
+    new_matrix[pre,:] = new_matrix[post,:]
+    pre=[i for i in y]
+    post=[y[i] for i in pre]
+    new_matrix[:,pre] = new_matrix[:,post]
+    return new_matrix
 
 prediction_list = []
 matched_list = []
 gt_list = []
 
-from TSpy.label import reorder_label
-for i in range(10):
+for i in range(num):
     groundtruth = reorder_label(np.load(true_state_seq_path+'test'+str(i)+'.npy'))
     gt_list.append([(s,s) for s in range(len(set(groundtruth)))])
     prediction = reorder_label(np.load(os.path.join(data_path, 'state_seq/test'+str(i)+'.npy')))
     matched_pairs = match_index(groundtruth, prediction)
     matched_list.append(matched_pairs)
     prediction_list.append(prediction)
-
-# gt = [(0,0),(1,1),(2,2),(3,3),(4,4),(5,5),(6,6)]
 
 def calculate_f1(G,P):
     U = list(set(G+P))
@@ -101,16 +113,39 @@ def calculate_f1(G,P):
 f1_list=[]
 r_list=[]
 p_list=[]
-for i in range(10):
-    for j in range(10):
+p_matrix_list = []
+for i in range(num):
+    for j in range(num):
         if i<j:
             continue
         matrix, lag_matrix = lagged_partial_state_corr(prediction_list[i], prediction_list[j])
-        # print(matched_list[i], matched_list[j])
-        prediction = retrieve_relation(matrix, matched_list[i], matched_list[j])
-        f1, r, p = calculate_f1(gt_list[i], prediction)
-        f1_list.append(f1)
-        r_list.append(r)
-        p_list.append(p)
-        print(f1, r, p)
-print(np.mean(f1_list),np.mean(r_list),np.mean(p_list))
+        matrix = match_matrix(matrix, matched_list[i], matched_list[j])
+        p_matrix_list.append(matrix)
+        # prediction = retrieve_relation(matrix, matched_list[i], matched_list[j])
+        # f1, r, p = calculate_f1(gt_list[i], prediction)
+        # f1_list.append(f1)
+        # r_list.append(r)
+        # p_list.append(p)
+        # print(f1, r, p)
+# print(np.mean(f1_list),np.mean(r_list),np.mean(p_list))
+
+width_list = [max(m.shape[0],m.shape[0]) for m in p_matrix_list]
+width = np.sum(width_list)
+print(width)
+
+groundtruth = np.diag(np.ones(width)==1)
+prediction = np.zeros((width,width))
+start_row=0
+start_col=0
+for matrix in p_matrix_list:
+    prediction[start_row:start_row+matrix.shape[0],start_col:start_col+matrix.shape[1]]=matrix
+    start_row+=matrix.shape[0]
+    start_col+=matrix.shape[1]
+
+from sklearn.metrics import precision_recall_curve, roc_curve
+import matplotlib.pyplot as plt
+# fpr, tpr, thread = roc_curve(groundtruth.flatten(), prediction.flatten())
+fpr, tpr, thread = precision_recall_curve(groundtruth.flatten(), prediction.flatten())
+plt.plot(fpr, tpr, color = 'darkorange')
+plt.savefig(os.path.join(figure_output_path,'roc.png'))
+plt.close()
