@@ -12,7 +12,7 @@ data_path = os.path.join(script_path, '../output/'+use_data+'/')
 true_state_seq_path = os.path.join(script_path, '../data/synthetic_data/state_seq_'+use_data+'/')
 figure_output_path = os.path.join(script_path, '../output/figs')
 
-num = 4
+num = 3
 if not os.path.exists(data_path+'matrix'):
     os.makedirs(data_path+'matrix')
 
@@ -85,6 +85,9 @@ prediction_list = []
 matched_list = []
 gt_list = []
 
+# data = np.ones((5,5))
+# data[1:3,:]=0
+# print(data)
 for i in range(num):
     groundtruth = reorder_label(np.load(true_state_seq_path+'test'+str(i)+'.npy'))
     gt_list.append([(s,s) for s in range(len(set(groundtruth)))])
@@ -116,20 +119,20 @@ p_list=[]
 p_matrix_list = []
 for i in range(num):
     for j in range(num):
-        if i<j:
+        if i<=j:
             continue
         matrix, lag_matrix = lagged_partial_state_corr(prediction_list[i], prediction_list[j])
-        matrix = match_matrix(matrix, matched_list[i], matched_list[j])
+        # matrix = match_matrix(matrix, matched_list[i], matched_list[j])
         p_matrix_list.append(matrix)
-        # prediction = retrieve_relation(matrix, matched_list[i], matched_list[j])
-        # f1, r, p = calculate_f1(gt_list[i], prediction)
-        # f1_list.append(f1)
-        # r_list.append(r)
-        # p_list.append(p)
-        # print(f1, r, p)
-# print(np.mean(f1_list),np.mean(r_list),np.mean(p_list))
+        prediction = retrieve_relation(matrix, matched_list[i], matched_list[j])
+        f1, r, p = calculate_f1(gt_list[i], prediction)
+        f1_list.append(f1)
+        r_list.append(r)
+        p_list.append(p)
+        print(f1, r, p)
+print(np.mean(f1_list),np.mean(r_list),np.mean(p_list))
 
-width_list = [max(m.shape[0],m.shape[0]) for m in p_matrix_list]
+width_list = [max(m.shape[0],m.shape[1]) for m in p_matrix_list]
 width = np.sum(width_list)
 print(width)
 
@@ -139,13 +142,19 @@ start_row=0
 start_col=0
 for matrix in p_matrix_list:
     prediction[start_row:start_row+matrix.shape[0],start_col:start_col+matrix.shape[1]]=matrix
-    start_row+=matrix.shape[0]
-    start_col+=matrix.shape[1]
+    start_row+=max(matrix.shape[0],matrix.shape[1])
+    start_col+=max(matrix.shape[0],matrix.shape[1])
 
 from sklearn.metrics import precision_recall_curve, roc_curve
 import matplotlib.pyplot as plt
 # fpr, tpr, thread = roc_curve(groundtruth.flatten(), prediction.flatten())
 fpr, tpr, thread = precision_recall_curve(groundtruth.flatten(), prediction.flatten())
+fig, ax = plt.subplots(ncols=2)
+ax[0].imshow(groundtruth)
+ax[1].imshow(prediction)
+plt.savefig(os.path.join(figure_output_path,'mat.png'))
+plt.close()
+
 plt.plot(fpr, tpr, color = 'darkorange')
 plt.savefig(os.path.join(figure_output_path,'roc.png'))
 plt.close()
