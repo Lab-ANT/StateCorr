@@ -22,6 +22,7 @@ def lagged_partial_state_corr(X, Y, atom_step=0.001, max_ratio=0.05):
     listX = decompose_state_seq(X)
     listY = decompose_state_seq(Y)
     score_matrix = np.zeros((len(listX),len(listY)))
+    lag_matrix = np.zeros((len(listX),len(listY)))
     # lag_matrix = np.zeros((len(listX),len(listY)))
     for i in range(len(listX)):
         for j in range(len(listY)):
@@ -37,8 +38,8 @@ def lagged_partial_state_corr(X, Y, atom_step=0.001, max_ratio=0.05):
                     max_score=Jscore
                     lag=lag_len
             score_matrix[i,j] = max_score
-    # print(np.round(score_matrix, 2))
-    return score_matrix, None
+            lag_matrix[i,j] = lag
+    return score_matrix, lag_matrix
 
 def find_match(X, Y, score_matrix):
     matched_pair = {}
@@ -117,6 +118,7 @@ f1_list=[]
 r_list=[]
 p_list=[]
 p_matrix_list = []
+lag_matrix_list = []
 for i in range(num):
     for j in range(num):
         if i<=j:
@@ -124,6 +126,7 @@ for i in range(num):
         matrix, lag_matrix = lagged_partial_state_corr(prediction_list[i], prediction_list[j])
         # matrix = match_matrix(matrix, matched_list[i], matched_list[j])
         p_matrix_list.append(matrix)
+        lag_matrix_list.append(lag_matrix)
         prediction = retrieve_relation(matrix, matched_list[i], matched_list[j])
         f1, r, p = calculate_f1(gt_list[i], prediction)
         f1_list.append(f1)
@@ -138,10 +141,12 @@ print(width)
 
 groundtruth = np.diag(np.ones(width)==1)
 prediction = np.zeros((width,width))
+lag = np.zeros((width,width))
 start_row=0
 start_col=0
-for matrix in p_matrix_list:
+for matrix,lagmat in zip(p_matrix_list, lag_matrix_list):
     prediction[start_row:start_row+matrix.shape[0],start_col:start_col+matrix.shape[1]]=matrix
+    lag[start_row:start_row+matrix.shape[0],start_col:start_col+matrix.shape[1]]=lagmat
     start_row+=max(matrix.shape[0],matrix.shape[1])
     start_col+=max(matrix.shape[0],matrix.shape[1])
 
@@ -149,9 +154,10 @@ from sklearn.metrics import precision_recall_curve, roc_curve
 import matplotlib.pyplot as plt
 # fpr, tpr, thread = roc_curve(groundtruth.flatten(), prediction.flatten())
 fpr, tpr, thread = precision_recall_curve(groundtruth.flatten(), prediction.flatten())
-fig, ax = plt.subplots(ncols=2)
+fig, ax = plt.subplots(ncols=3)
 ax[0].imshow(groundtruth)
 ax[1].imshow(prediction)
+ax[2].imshow(lag)
 plt.savefig(os.path.join(figure_output_path,'mat.png'))
 plt.close()
 
