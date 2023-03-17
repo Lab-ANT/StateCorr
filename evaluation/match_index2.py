@@ -13,14 +13,9 @@ data_path = os.path.join(script_path, '../output/'+use_data+'/')
 true_state_seq_path = os.path.join(script_path, '../data/synthetic_data/state_seq_'+use_data+'/')
 figure_output_path = os.path.join(script_path, '../output/figs')
 
-num = 3
+num = 5
 if not os.path.exists(data_path+'matrix'):
     os.makedirs(data_path+'matrix')
-
-# def score2(X,Y):
-#     len_x_or_y = np.count_nonzero(X)
-#     len_x_and_y = np.sum((X+Y)==2)  
-#     return len_x_and_y/len_x_or_y
 
 def lagged_partial_state_corr(X, Y, atom_step=0.001, max_ratio=0.05):
     length = len(X)
@@ -52,7 +47,6 @@ def find_match(X, Y, score_matrix):
     height, width = score_matrix.shape
     for i in range(min(height, width)):
         row, col = np.unravel_index(np.argmax(score_matrix), score_matrix.shape)
-        # matched_pair.append((row, col))
         matched_pair[col]=row
         score_matrix[row,:] = 0
         score_matrix[:,col] = 0
@@ -69,23 +63,26 @@ def retrieve_relation(matrix, x, y):
     relation_set = []
     for i in range(matrix.shape[0]):
         idx = np.argmax(matrix[i,:])
-        # relation_set.append((i,idx))
-        if i in x and idx in y:
-            relation_set.append((x[i],y[idx]))
-        else:
-            relation_set.append((i,idx))
+        relation_set.append((i,idx))
+        # relation_set.append((x[i],y[idx]))
+        # if i in x and idx in y:
+        #     relation_set.append((x[i],y[idx]))
+        # else:
+        #     relation_set.append((i,idx))
     return relation_set
 
-def match_matrix(matrix, x, y):
-    # print(x,y)
+def match_matrix(matrix, x, y):    
     new_matrix = matrix.copy()
     pre=[i for i in x]
     post=[x[i] for i in pre]
     # print(pre,post,x)
-    new_matrix[pre,:] = new_matrix[post,:]
+    # new_matrix[pre,:] = new_matrix[post,:]
+    new_matrix[post,:] = new_matrix[pre,:]
     pre=[i for i in y]
     post=[y[i] for i in pre]
-    new_matrix[:,pre] = new_matrix[:,post]
+    # print(pre,post,x)
+    # new_matrix[:,pre] = new_matrix[:,post]
+    new_matrix[:,post] = new_matrix[:,pre]
     return new_matrix
 
 prediction_list = []
@@ -104,6 +101,7 @@ for i in range(num):
     prediction_list.append(prediction)
 
 plt.savefig(os.path.join(figure_output_path,'seg.png'))
+plt.close()
 
 def calculate_f1(G,P):
     U = list(set(G+P))
@@ -135,7 +133,10 @@ for i in range(num):
         matrix = match_matrix(matrix, matched_list[i], matched_list[j])
         p_matrix_list.append(matrix)
         lag_matrix_list.append(lag_matrix)
+        # print(matched_list[i])
+        # print(matched_list[j])
         prediction = retrieve_relation(matrix, matched_list[i], matched_list[j])
+        # print(prediction)
         f1, r, p = calculate_f1(gt_list[i], prediction)
         f1_list.append(f1)
         r_list.append(r)
@@ -158,7 +159,7 @@ for matrix,lagmat in zip(p_matrix_list, lag_matrix_list):
     start_row+=max(matrix.shape[0],matrix.shape[1])
     start_col+=max(matrix.shape[0],matrix.shape[1])
 
-from sklearn.metrics import precision_recall_curve, roc_curve
+from sklearn.metrics import precision_recall_curve, roc_curve, auc
 # fpr, tpr, thread = roc_curve(groundtruth.flatten(), prediction.flatten())
 fpr, tpr, thread = precision_recall_curve(groundtruth.flatten(), prediction.flatten())
 fig, ax = plt.subplots(ncols=3, figsize=(9,3))
@@ -169,5 +170,7 @@ plt.savefig(os.path.join(figure_output_path,'mat.png'))
 plt.close()
 
 plt.plot(fpr, tpr, color = 'darkorange')
+print(auc(fpr, tpr))
+# plt.plot(fpr, tpr, color = 'darkorange')
 plt.savefig(os.path.join(figure_output_path,'roc.png'))
 plt.close()
