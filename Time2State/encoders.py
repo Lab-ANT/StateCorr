@@ -12,14 +12,10 @@ import losses
 import math
 import numpy as np
 import torch
-def hanning_tensor(X):
-    length = X.size(2)
-    weight = (1-np.cos(2*math.pi*np.arange(length)/length))/2
-    weight = torch.tensor(weight)
-    return weight*X
 def hanning_numpy(X):
     length = X.shape[2]
-    weight = (1-np.cos(2*math.pi*np.arange(length)/length))/2
+    # weight = (1-np.cos(2*math.pi*np.arange(length)/length))/2
+    weight = np.cos(2*math.pi*np.arange(length)/length)+0.5
     return weight*X
 
 class BasicEncoder():

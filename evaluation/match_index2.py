@@ -93,77 +93,77 @@ for i in range(num):
 plt.savefig(os.path.join(figure_output_path,'seg.png'))
 plt.close()
 
-def calculate_f1(G,P):
-    U = list(set(G+P))
-    TP, FP, FN = 0,0,0
-    # print(U)
-    for r in U:
-        if r in G and r in P:
-            TP+=1
-        elif r in G and r not in P:
-            FN+=1
-        elif r in P and r not in G:
-            FP+=1
-    recall=TP/(TP+FN)
-    precision=TP/(TP+FP)
-    f1=2*recall*precision/(recall+precision)
-    # print(f1, recall, precision)
-    return f1, recall, precision
+# def calculate_f1(G,P):
+#     U = list(set(G+P))
+#     TP, FP, FN = 0,0,0
+#     # print(U)
+#     for r in U:
+#         if r in G and r in P:
+#             TP+=1
+#         elif r in G and r not in P:
+#             FN+=1
+#         elif r in P and r not in G:
+#             FP+=1
+#     recall=TP/(TP+FN)
+#     precision=TP/(TP+FP)
+#     f1=2*recall*precision/(recall+precision)
+#     # print(f1, recall, precision)
+#     return f1, recall, precision
 
-f1_list=[]
-r_list=[]
-p_list=[]
-p_matrix_list = []
-lag_matrix_list = []
-for i in range(num):
-    for j in range(num):
-        if i<=j:
-            continue
-        matrix, lag_matrix = lagged_partial_state_corr(prediction_list[i], prediction_list[j])
-        matrix = match_matrix(matrix, matched_list[i], matched_list[j])
-        p_matrix_list.append(matrix)
-        lag_matrix_list.append(lag_matrix)
-        prediction = retrieve_relation(matrix, matched_list[i], matched_list[j])
-        f1, r, p = calculate_f1(gt_list[i], prediction)
-        f1_list.append(f1)
-        r_list.append(r)
-        p_list.append(p)
-        print(f1, r, p)
-print('mean', np.mean(f1_list),np.mean(r_list),np.mean(p_list))
+# f1_list=[]
+# r_list=[]
+# p_list=[]
+# p_matrix_list = []
+# lag_matrix_list = []
+# for i in range(num):
+#     for j in range(num):
+#         if i<=j:
+#             continue
+#         matrix, lag_matrix = lagged_partial_state_corr(prediction_list[i], prediction_list[j])
+#         matrix = match_matrix(matrix, matched_list[i], matched_list[j])
+#         p_matrix_list.append(matrix)
+#         lag_matrix_list.append(lag_matrix)
+#         prediction = retrieve_relation(matrix, matched_list[i], matched_list[j])
+#         f1, r, p = calculate_f1(gt_list[i], prediction)
+#         f1_list.append(f1)
+#         r_list.append(r)
+#         p_list.append(p)
+#         print(f1, r, p)
+# print('mean', np.mean(f1_list),np.mean(r_list),np.mean(p_list))
 
-width_list = [max(m.shape[0],m.shape[1]) for m in p_matrix_list]
-width = np.sum(width_list)
-print(width)
+# width_list = [max(m.shape[0],m.shape[1]) for m in p_matrix_list]
+# width = np.sum(width_list)
+# print(width)
 
-# groundtruth = np.diag(np.ones(width)==1)
-groundtruth = np.zeros((width, width))
-prediction = np.zeros((width,width))
-lag = np.zeros((width,width))
-start_row=0
-start_col=0
-for matrix,lagmat,gt in zip(p_matrix_list, lag_matrix_list, gt_list):
-    prediction[start_row:start_row+matrix.shape[0],start_col:start_col+matrix.shape[1]]=matrix
-    lag[start_row:start_row+matrix.shape[0],start_col:start_col+matrix.shape[1]]=lagmat
-    for i in range(gt[-1][0]):
-        groundtruth[start_row+i, start_col+i] = True
-    start_row+=max(matrix.shape[0],matrix.shape[1])
-    start_col+=max(matrix.shape[0],matrix.shape[1])
+# # groundtruth = np.diag(np.ones(width)==1)
+# groundtruth = np.zeros((width, width))
+# prediction = np.zeros((width,width))
+# lag = np.zeros((width,width))
+# start_row=0
+# start_col=0
+# for matrix,lagmat,gt in zip(p_matrix_list, lag_matrix_list, gt_list):
+#     prediction[start_row:start_row+matrix.shape[0],start_col:start_col+matrix.shape[1]]=matrix
+#     lag[start_row:start_row+matrix.shape[0],start_col:start_col+matrix.shape[1]]=lagmat
+#     for i in range(gt[-1][0]):
+#         groundtruth[start_row+i, start_col+i] = True
+#     start_row+=max(matrix.shape[0],matrix.shape[1])
+#     start_col+=max(matrix.shape[0],matrix.shape[1])
 
-from sklearn.metrics import precision_recall_curve, roc_curve, auc
-fig, ax = plt.subplots(ncols=3, figsize=(9,3))
-ax[0].imshow(groundtruth)
-ax[1].imshow(prediction)
-ax[2].imshow(lag)
-plt.savefig(os.path.join(figure_output_path,'mat.png'))
-plt.close()
+# from sklearn.metrics import precision_recall_curve, roc_curve, auc
+# fig, ax = plt.subplots(ncols=3, figsize=(9,3))
+# ax[0].imshow(groundtruth)
+# ax[1].imshow(prediction)
+# ax[2].imshow(lag)
+# plt.savefig(os.path.join(figure_output_path,'mat.png'))
+# plt.close()
 
-fpr, tpr, thread = roc_curve(groundtruth.flatten(), prediction.flatten())
-# print(auc(fpr, tpr))
-plt.plot(fpr, tpr, color = 'darkorange')
-plt.savefig(os.path.join(figure_output_path,'roc.png'))
-plt.close()
+# fpr, tpr, thread = roc_curve(groundtruth.flatten(), prediction.flatten())
+# # print(auc(fpr, tpr))
+# plt.plot(fpr, tpr, color = 'darkorange')
+# plt.savefig(os.path.join(figure_output_path,'roc.png'))
+# plt.close()
 
-fpr, tpr, thread = precision_recall_curve(groundtruth.flatten(), prediction.flatten())
-plt.plot(fpr, tpr, color = 'darkorange')
-plt.savefig(os.path.join(figure_output_path,'prc.png'))
-plt.close()
+# fpr, tpr, thread = precision_recall_curve(groundtruth.flatten(), prediction.flatten())
+# plt.plot(fpr, tpr, color = 'darkorange')
+# plt.savefig(os.path.join(figure_output_path,'prc.png'))
+# plt.close()
