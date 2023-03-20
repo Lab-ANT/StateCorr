@@ -11,7 +11,7 @@ data_path = os.path.join(script_path, '../output/'+use_data+'/')
 true_state_seq_path = os.path.join(script_path, '../data/synthetic_data/state_seq_'+use_data+'/')
 figure_output_path = os.path.join(script_path, '../output/figs')
 
-num = 3
+num = 2
 if not os.path.exists(data_path+'matrix'):
     os.makedirs(data_path+'matrix')
 
