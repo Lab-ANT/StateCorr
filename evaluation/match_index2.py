@@ -1,5 +1,3 @@
-import json
-from turtle import width
 import numpy as np
 import os
 from TSpy.corr import decompose_state_seq, add_lag, score, partial_state_corr
@@ -17,14 +15,13 @@ num = 3
 if not os.path.exists(data_path+'matrix'):
     os.makedirs(data_path+'matrix')
 
-def lagged_partial_state_corr(X, Y, atom_step=0.005, max_ratio=0.05):
+def lagged_partial_state_corr(X, Y, atom_step=0.001, max_ratio=0.05):
     length = len(X)
     k = int(max_ratio/atom_step)
     listX = decompose_state_seq(X)
     listY = decompose_state_seq(Y)
     score_matrix = np.zeros((len(listX),len(listY)))
     lag_matrix = np.zeros((len(listX),len(listY)))
-    # lag_matrix = np.zeros((len(listX),len(listY)))
     for i in range(len(listX)):
         for j in range(len(listY)):
             sssX = listX[i]
@@ -64,11 +61,6 @@ def retrieve_relation(matrix, x, y):
     for i in range(matrix.shape[0]):
         idx = np.argmax(matrix[i,:])
         relation_set.append((i,idx))
-        # relation_set.append((x[i],y[idx]))
-        # if i in x and idx in y:
-        #     relation_set.append((x[i],y[idx]))
-        # else:
-        #     relation_set.append((i,idx))
     return relation_set
 
 def match_matrix(matrix, x, y):    
@@ -76,12 +68,10 @@ def match_matrix(matrix, x, y):
     pre=[i for i in x]
     post=[x[i] for i in pre]
     # print(pre,post,x)
-    # new_matrix[pre,:] = new_matrix[post,:]
     new_matrix[post,:] = new_matrix[pre,:]
     pre=[i for i in y]
     post=[y[i] for i in pre]
     # print(pre,post,x)
-    # new_matrix[:,pre] = new_matrix[:,post]
     new_matrix[:,post] = new_matrix[:,pre]
     return new_matrix
 
@@ -133,10 +123,7 @@ for i in range(num):
         matrix = match_matrix(matrix, matched_list[i], matched_list[j])
         p_matrix_list.append(matrix)
         lag_matrix_list.append(lag_matrix)
-        # print(matched_list[i])
-        # print(matched_list[j])
         prediction = retrieve_relation(matrix, matched_list[i], matched_list[j])
-        # print(prediction)
         f1, r, p = calculate_f1(gt_list[i], prediction)
         f1_list.append(f1)
         r_list.append(r)
@@ -150,7 +137,6 @@ print(width)
 
 # groundtruth = np.diag(np.ones(width)==1)
 groundtruth = np.zeros((width, width))
-
 prediction = np.zeros((width,width))
 lag = np.zeros((width,width))
 start_row=0
@@ -164,8 +150,6 @@ for matrix,lagmat,gt in zip(p_matrix_list, lag_matrix_list, gt_list):
     start_col+=max(matrix.shape[0],matrix.shape[1])
 
 from sklearn.metrics import precision_recall_curve, roc_curve, auc
-fpr, tpr, thread = roc_curve(groundtruth.flatten(), prediction.flatten())
-# fpr, tpr, thread = precision_recall_curve(groundtruth.flatten(), prediction.flatten())
 fig, ax = plt.subplots(ncols=3, figsize=(9,3))
 ax[0].imshow(groundtruth)
 ax[1].imshow(prediction)
@@ -173,8 +157,13 @@ ax[2].imshow(lag)
 plt.savefig(os.path.join(figure_output_path,'mat.png'))
 plt.close()
 
-# plt.plot(fpr, tpr, color = 'darkorange')
-plt.plot(fpr, tpr, color = 'darkorange')
+fpr, tpr, thread = roc_curve(groundtruth.flatten(), prediction.flatten())
 # print(auc(fpr, tpr))
+plt.plot(fpr, tpr, color = 'darkorange')
 plt.savefig(os.path.join(figure_output_path,'roc.png'))
+plt.close()
+
+fpr, tpr, thread = precision_recall_curve(groundtruth.flatten(), prediction.flatten())
+plt.plot(fpr, tpr, color = 'darkorange')
+plt.savefig(os.path.join(figure_output_path,'prc.png'))
 plt.close()
