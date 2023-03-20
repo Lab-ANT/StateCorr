@@ -13,11 +13,11 @@ data_path = os.path.join(script_path, '../output/'+use_data+'/')
 true_state_seq_path = os.path.join(script_path, '../data/synthetic_data/state_seq_'+use_data+'/')
 figure_output_path = os.path.join(script_path, '../output/figs')
 
-num = 5
+num = 3
 if not os.path.exists(data_path+'matrix'):
     os.makedirs(data_path+'matrix')
 
-def lagged_partial_state_corr(X, Y, atom_step=0.001, max_ratio=0.05):
+def lagged_partial_state_corr(X, Y, atom_step=0.005, max_ratio=0.05):
     length = len(X)
     k = int(max_ratio/atom_step)
     listX = decompose_state_seq(X)
@@ -142,26 +142,30 @@ for i in range(num):
         r_list.append(r)
         p_list.append(p)
         print(f1, r, p)
-print(np.mean(f1_list),np.mean(r_list),np.mean(p_list))
+print('mean', np.mean(f1_list),np.mean(r_list),np.mean(p_list))
 
 width_list = [max(m.shape[0],m.shape[1]) for m in p_matrix_list]
 width = np.sum(width_list)
 print(width)
 
-groundtruth = np.diag(np.ones(width)==1)
+# groundtruth = np.diag(np.ones(width)==1)
+groundtruth = np.zeros((width, width))
+
 prediction = np.zeros((width,width))
 lag = np.zeros((width,width))
 start_row=0
 start_col=0
-for matrix,lagmat in zip(p_matrix_list, lag_matrix_list):
+for matrix,lagmat,gt in zip(p_matrix_list, lag_matrix_list, gt_list):
     prediction[start_row:start_row+matrix.shape[0],start_col:start_col+matrix.shape[1]]=matrix
     lag[start_row:start_row+matrix.shape[0],start_col:start_col+matrix.shape[1]]=lagmat
+    for i in range(gt[-1][0]):
+        groundtruth[start_row+i, start_col+i] = True
     start_row+=max(matrix.shape[0],matrix.shape[1])
     start_col+=max(matrix.shape[0],matrix.shape[1])
 
 from sklearn.metrics import precision_recall_curve, roc_curve, auc
-# fpr, tpr, thread = roc_curve(groundtruth.flatten(), prediction.flatten())
-fpr, tpr, thread = precision_recall_curve(groundtruth.flatten(), prediction.flatten())
+fpr, tpr, thread = roc_curve(groundtruth.flatten(), prediction.flatten())
+# fpr, tpr, thread = precision_recall_curve(groundtruth.flatten(), prediction.flatten())
 fig, ax = plt.subplots(ncols=3, figsize=(9,3))
 ax[0].imshow(groundtruth)
 ax[1].imshow(prediction)
@@ -169,8 +173,8 @@ ax[2].imshow(lag)
 plt.savefig(os.path.join(figure_output_path,'mat.png'))
 plt.close()
 
-plt.plot(fpr, tpr, color = 'darkorange')
-print(auc(fpr, tpr))
 # plt.plot(fpr, tpr, color = 'darkorange')
+plt.plot(fpr, tpr, color = 'darkorange')
+# print(auc(fpr, tpr))
 plt.savefig(os.path.join(figure_output_path,'roc.png'))
 plt.close()
