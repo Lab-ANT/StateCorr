@@ -62,14 +62,10 @@ def retrieve_relation(matrix):
     return relation_set
 
 def match_matrix(matrix, x, y):
-    # print(x,y)
-    # new_matrix = matrix.copy()
-
     new_height = max(matrix.shape[0],7)
     new_weight = max(matrix.shape[1],7)
     new_matrix = np.zeros((new_height, new_weight))
     new_matrix[:matrix.shape[0],:matrix.shape[1]] = matrix
-    # print(new_matrix.shape, matrix.shape,)
 
     pre=[i for i in x]
     post=[x[i] for i in pre]
@@ -117,16 +113,18 @@ f1_list=[]
 r_list=[]
 p_list=[]
 p_matrix_list = []
+o_matrix_list = []
 lag_matrix_list = []
 for i in range(num):
     for j in range(num):
         if i<=j:
             continue
         matrix, lag_matrix = lagged_partial_state_corr(prediction_list[i], prediction_list[j])
-        matrix = match_matrix(matrix, matched_list[i], matched_list[j])
-        p_matrix_list.append(matrix)
+        o_matrix_list.append(matrix)
+        adjusted_matrix = match_matrix(matrix, matched_list[i], matched_list[j])
+        p_matrix_list.append(adjusted_matrix)
         lag_matrix_list.append(lag_matrix)
-        prediction = retrieve_relation(matrix)
+        prediction = retrieve_relation(adjusted_matrix)
         f1, r, p = calculate_f1(gt_list[i], prediction)
         f1_list.append(f1)
         r_list.append(r)
@@ -140,11 +138,13 @@ print(width)
 
 groundtruth = np.zeros((width, width))
 prediction = np.zeros((width,width))
+omat = np.zeros((width,width))
 lag = np.zeros((width,width))
 start_row=0
 start_col=0
-for matrix,lagmat in zip(p_matrix_list, lag_matrix_list):
+for matrix,lagmat,omatrix in zip(p_matrix_list, lag_matrix_list, o_matrix_list):
     prediction[start_row:start_row+matrix.shape[0],start_col:start_col+matrix.shape[1]]=matrix
+    omat[start_row:start_row+matrix.shape[0],start_col:start_col+matrix.shape[1]]=omatrix
     # lag[start_row:start_row+matrix.shape[0],start_col:start_col+matrix.shape[1]]=lagmat
     for i in range(6):
         groundtruth[start_row+i, start_col+i] = True
@@ -155,13 +155,13 @@ from sklearn.metrics import f1_score, precision_recall_curve, precision_score, r
 fig, ax = plt.subplots(ncols=3, figsize=(9,3))
 ax[0].imshow(groundtruth)
 ax[1].imshow(prediction)
-# ax[2].imshow(lag)
+ax[2].imshow(omat)
 plt.savefig(os.path.join(figure_output_path,'mat.png'))
 plt.close()
 
-print('f1',f1_score(groundtruth.flatten(), (prediction>=0.8).flatten()))
-print('p',precision_score(groundtruth.flatten(), (prediction>=0.8).flatten()))
-print('r',recall_score(groundtruth.flatten(), (prediction>=0.8).flatten()))
+print('f1',f1_score(groundtruth.flatten(), (prediction>=0.45).flatten()))
+print('p',precision_score(groundtruth.flatten(), (prediction>=0.45).flatten()))
+print('r',recall_score(groundtruth.flatten(), (prediction>=0.45).flatten()))
 fpr, tpr, thread = roc_curve(groundtruth.flatten(), prediction.flatten())
 print(auc(fpr, tpr))
 plt.plot(fpr, tpr, color = 'darkorange')
