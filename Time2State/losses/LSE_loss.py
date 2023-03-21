@@ -1,14 +1,14 @@
 import torch
 import numpy
-import math
-import numpy as np
-import torch
+# import math
+# import numpy as np
+# import torch
 
-def hanning_tensor(X):
-    length = X.size(2)
-    weight = (1-np.cos(2*math.pi*np.arange(length)/length))/2
-    weight = torch.tensor(weight)
-    return weight.cuda()*X
+# def hanning_tensor(X):
+#     length = X.size(2)
+#     weight = (1-np.cos(2*math.pi*np.arange(length)/length))/2
+#     weight = torch.tensor(weight)
+#     return weight.cuda()*X
 
 class LSELoss(torch.nn.modules.loss._Loss):
     """
@@ -65,8 +65,8 @@ class LSELoss(torch.nn.modules.loss._Loss):
             random_pos = numpy.random.randint(0, high=total_length - length_pos_neg*2 + 1, size=self.nb_random_samples)
             rand_samples = [batch[0,:, i: i+length_pos_neg] for i in range(random_pos[0],random_pos[0]+N)]
             # print(random_pos)
-            embeddings = encoder(hanning_tensor(torch.stack(rand_samples)))
-            # embeddings = encoder(torch.stack(rand_samples))
+            # embeddings = encoder(hanning_tensor(torch.stack(rand_samples)))
+            embeddings = encoder(torch.stack(rand_samples))
             # print(embeddings.shape)
             size_representation = embeddings.size(1)
 

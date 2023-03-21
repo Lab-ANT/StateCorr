@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from TSpy.label import adjust_label, reorder_label
 from TSpy.dataset import load_SMD
-from TSpy.corr import match_label
+# from TSpy.corr import match_label
 
 script_path = os.path.dirname(__file__)
 data_path = os.path.join(script_path, '../data/SMD/')
@@ -35,7 +35,8 @@ def find_top_k(id, k):
     fig, ax = plt.subplots(nrows=k, sharex=True, figsize=(4,8))
     for i in range(k):
         data_ = data[:,idx[i]]
-        state_seq = match_label(state_seq1, reorder_label(adjust_label(state_seq_array[idx[i]]))).reshape(1,-1)
+        # state_seq = match_label(state_seq1, reorder_label(adjust_label(state_seq_array[idx[i]]))).reshape(1,-1)
+        state_seq = reorder_label(state_seq_array[idx[i]]).reshape(1,-1)
         state_seq = np.concatenate([state_seq, state_seq])
         # ax[i].plot(exclude_outlier(data_), color= '#348ABC')
         ax[i].imshow(state_seq, aspect='auto', cmap='tab20c', interpolation='nearest', alpha=0.5, origin='lower')

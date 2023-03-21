@@ -30,8 +30,8 @@ def calculate_all():
 def calculate_one(file_name):
     result_path = os.path.join(script_path, '../case_study1/state_seq'+metric+'/'+file_name+'.npy')
     state_seq_array = np.load(result_path)
-    # corr_matrix = state_correlation(state_seq_array)
-    corr_matrix = lagged_state_correlation(state_seq_array)
+    corr_matrix = state_correlation(state_seq_array)
+    # corr_matrix = lagged_state_correlation(state_seq_array)
     np.save(os.path.join(matrix_save_path, file_name+'.npy'), corr_matrix)
 
 # calculate_all()

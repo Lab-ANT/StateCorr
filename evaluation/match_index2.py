@@ -11,7 +11,7 @@ data_path = os.path.join(script_path, '../output/'+use_data+'/')
 true_state_seq_path = os.path.join(script_path, '../data/synthetic_data/state_seq_'+use_data+'/')
 figure_output_path = os.path.join(script_path, '../output/figs')
 
-num = 5
+num = 10
 
 def lagged_partial_state_corr(X, Y, atom_step=0.001, max_ratio=0.05):
     length = len(X)
@@ -144,7 +144,7 @@ start_row=0
 start_col=0
 for matrix,lagmat,omatrix in zip(p_matrix_list, lag_matrix_list, o_matrix_list):
     prediction[start_row:start_row+matrix.shape[0],start_col:start_col+matrix.shape[1]]=matrix
-    omat[start_row:start_row+matrix.shape[0],start_col:start_col+matrix.shape[1]]=omatrix
+    # omat[start_row:start_row+matrix.shape[0],start_col:start_col+matrix.shape[1]]=omatrix
     # lag[start_row:start_row+matrix.shape[0],start_col:start_col+matrix.shape[1]]=lagmat
     for i in range(6):
         groundtruth[start_row+i, start_col+i] = True
