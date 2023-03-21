@@ -11,7 +11,7 @@ data_path = os.path.join(script_path, '../output/'+use_data+'/')
 true_state_seq_path = os.path.join(script_path, '../data/synthetic_data/state_seq_'+use_data+'/')
 figure_output_path = os.path.join(script_path, '../output/figs')
 
-num = 3
+num = 5
 
 def lagged_partial_state_corr(X, Y, atom_step=0.001, max_ratio=0.05):
     length = len(X)
@@ -65,8 +65,8 @@ def match_matrix(matrix, x, y):
     # print(x,y)
     # new_matrix = matrix.copy()
 
-    new_height = max(matrix.shape[0],7)
-    new_weight = max(matrix.shape[1],7)
+    new_height = max(matrix.shape[0],6)
+    new_weight = max(matrix.shape[1],6)
     new_matrix = np.zeros((new_height, new_weight))
     new_matrix[:matrix.shape[0],:matrix.shape[1]] = matrix
     # print(new_matrix.shape, matrix.shape,)
@@ -122,6 +122,7 @@ for i in range(num):
     for j in range(num):
         if i<=j:
             continue
+        print(i,j)
         matrix, lag_matrix = lagged_partial_state_corr(prediction_list[i], prediction_list[j])
         matrix = match_matrix(matrix, matched_list[i], matched_list[j])
         p_matrix_list.append(matrix)
@@ -143,10 +144,10 @@ prediction = np.zeros((width,width))
 lag = np.zeros((width,width))
 start_row=0
 start_col=0
-for matrix,lagmat,gt in zip(p_matrix_list, lag_matrix_list, gt_list):
+for matrix,lagmat in zip(p_matrix_list, lag_matrix_list):
     prediction[start_row:start_row+matrix.shape[0],start_col:start_col+matrix.shape[1]]=matrix
     # lag[start_row:start_row+matrix.shape[0],start_col:start_col+matrix.shape[1]]=lagmat
-    for i in range(gt[-1][0]):
+    for i in range(6):
         groundtruth[start_row+i, start_col+i] = True
     start_row+=max(matrix.shape[0],matrix.shape[1])
     start_col+=max(matrix.shape[0],matrix.shape[1])
