@@ -3,15 +3,13 @@ import numpy
 import math
 import numpy as np
 import torch
+
 def hanning_tensor(X):
     length = X.size(2)
     weight = (1-np.cos(2*math.pi*np.arange(length)/length))/2
     weight = torch.tensor(weight)
     return weight.cuda()*X
-def hanning_numpy(X):
-    length = X.shape[2]
-    weight = (1-np.cos(2*math.pi*np.arange(length)/length))/2
-    return weight*X
+
 class LSELoss(torch.nn.modules.loss._Loss):
     """
     Triplet loss for representations of time series. Optimized for training
@@ -67,12 +65,11 @@ class LSELoss(torch.nn.modules.loss._Loss):
             random_pos = numpy.random.randint(0, high=total_length - length_pos_neg*2 + 1, size=self.nb_random_samples)
             rand_samples = [batch[0,:, i: i+length_pos_neg] for i in range(random_pos[0],random_pos[0]+N)]
             # print(random_pos)
-            # embeddings = encoder(hanning_tensor(torch.stack(rand_samples)))
-            embeddings = encoder(torch.stack(rand_samples))
+            embeddings = encoder(hanning_tensor(torch.stack(rand_samples)))
+            # embeddings = encoder(torch.stack(rand_samples))
             # print(embeddings.shape)
             size_representation = embeddings.size(1)
 
-            # calculate distance
             for i in range(N):
                 for j in range(N):
                     if j<=i:
@@ -81,18 +78,6 @@ class LSELoss(torch.nn.modules.loss._Loss):
                         loss1 += -torch.mean(torch.nn.functional.logsigmoid(torch.bmm(
                             embeddings[i].view(1, 1, size_representation),
                             embeddings[j].view(1, size_representation, 1))/self.tau))
-                        # loss1 += -torch.mean(torch.nn.functional.logsigmoid(torch.bmm(
-                        #     embeddings[i].unsqueeze(0).unsqueeze(0),
-                        #     embeddings[j].unsqueeze(0).unsqueeze(-1))))
-            # for i in range(N):
-            #     intra_list = []
-            #     for j in range(N):
-            #         if j==i:
-            #             continue
-            #         intra_list.append(embeddings[j].unsqueeze(-1))
-            #     intra_matrix = torch.stack(intra_list)
-            #     matrix = embeddings[i].unsqueeze(0).repeat(N-1,1,1)
-            #     loss1 += -torch.mean(torch.nn.functional.logsigmoid(torch.bmm(matrix,intra_matrix)))
             center = torch.mean(embeddings, dim=0)
             center_list.append(center)
         
@@ -104,19 +89,6 @@ class LSELoss(torch.nn.modules.loss._Loss):
                 loss2 += -torch.mean(torch.nn.functional.logsigmoid(-torch.bmm(
                     center_list[i].view(1, 1, size_representation),
                     center_list[j].view(1, size_representation, 1))/self.tau))
-                # loss2 += -torch.mean(torch.nn.functional.logsigmoid(-torch.bmm(
-                #     center_list[i].unsqueeze(0).unsqueeze(0),
-                #     center_list[j].unsqueeze(0).unsqueeze(-1))))
-        # for i in range(M):
-        #     inter_list = []
-        #     for j in range(M):
-        #         if j==i:
-        #             continue
-        #         inter_list.append(center_list[j].unsqueeze(-1))
-        #         inter_matrix = torch.stack(inter_list)
-        #     matrix = center_list[i].unsqueeze(0).repeat(M-1,1,1)
-        #     # print(matrix.size(), inter_matrix.size())
-        #     loss2 += -torch.mean(torch.nn.functional.logsigmoid(-torch.bmm(matrix,inter_matrix)))
 
         loss = loss1/(M*N*(N-1)/2) + loss2/(M*(M-1)/2)
         # loss = loss2/(M*(M-1)/2)

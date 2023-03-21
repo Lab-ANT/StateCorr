@@ -65,8 +65,8 @@ def match_matrix(matrix, x, y):
     # print(x,y)
     # new_matrix = matrix.copy()
 
-    new_height = max(matrix.shape[0],6)
-    new_weight = max(matrix.shape[1],6)
+    new_height = max(matrix.shape[0],7)
+    new_weight = max(matrix.shape[1],7)
     new_matrix = np.zeros((new_height, new_weight))
     new_matrix[:matrix.shape[0],:matrix.shape[1]] = matrix
     # print(new_matrix.shape, matrix.shape,)
@@ -122,7 +122,6 @@ for i in range(num):
     for j in range(num):
         if i<=j:
             continue
-        print(i,j)
         matrix, lag_matrix = lagged_partial_state_corr(prediction_list[i], prediction_list[j])
         matrix = match_matrix(matrix, matched_list[i], matched_list[j])
         p_matrix_list.append(matrix)
@@ -152,7 +151,7 @@ for matrix,lagmat in zip(p_matrix_list, lag_matrix_list):
     start_row+=max(matrix.shape[0],matrix.shape[1])
     start_col+=max(matrix.shape[0],matrix.shape[1])
 
-from sklearn.metrics import precision_recall_curve, roc_curve, auc
+from sklearn.metrics import f1_score, precision_recall_curve, precision_score, recall_score, roc_curve, auc
 fig, ax = plt.subplots(ncols=3, figsize=(9,3))
 ax[0].imshow(groundtruth)
 ax[1].imshow(prediction)
@@ -160,13 +159,16 @@ ax[1].imshow(prediction)
 plt.savefig(os.path.join(figure_output_path,'mat.png'))
 plt.close()
 
+print('f1',f1_score(groundtruth.flatten(), (prediction>=0.8).flatten()))
+print('p',precision_score(groundtruth.flatten(), (prediction>=0.8).flatten()))
+print('r',recall_score(groundtruth.flatten(), (prediction>=0.8).flatten()))
 fpr, tpr, thread = roc_curve(groundtruth.flatten(), prediction.flatten())
-# print(auc(fpr, tpr))
+print(auc(fpr, tpr))
 plt.plot(fpr, tpr, color = 'darkorange')
 plt.savefig(os.path.join(figure_output_path,'roc.png'))
 plt.close()
 
-fpr, tpr, thread = precision_recall_curve(groundtruth.flatten(), prediction.flatten())
-plt.plot(fpr, tpr, color = 'darkorange')
+precision, recall, threshold = precision_recall_curve(groundtruth.flatten(), prediction.flatten())
+plt.plot(precision, recall)
 plt.savefig(os.path.join(figure_output_path,'prc.png'))
 plt.close()
