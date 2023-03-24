@@ -3,8 +3,9 @@ import os
 from TSpy.corr import decompose_state_seq, add_lag, score, partial_state_corr
 from TSpy.label import reorder_label
 import matplotlib.pyplot as plt
+from sklearn.metrics import precision_recall_curve, roc_curve, auc
 
-use_data = 'dataset5'
+use_data = 'dataset4'
 
 script_path = os.path.dirname(__file__)
 data_path = os.path.join(script_path, '../output/'+use_data+'/')
@@ -61,9 +62,9 @@ def retrieve_relation(matrix):
         relation_set.append((i,idx))
     return relation_set
 
-def match_matrix(matrix, x, y):
-    new_height = max(matrix.shape[0],7)
-    new_weight = max(matrix.shape[1],7)
+def match_matrix(matrix, x, y, lw):
+    new_height = max(matrix.shape[0],lw)
+    new_weight = max(matrix.shape[1],lw)
     new_matrix = np.zeros((new_height, new_weight))
     new_matrix[:matrix.shape[0],:matrix.shape[1]] = matrix
 
@@ -115,15 +116,18 @@ p_list=[]
 p_matrix_list = []
 o_matrix_list = []
 lag_matrix_list = []
+true_lw = []
 for i in range(num):
     for j in range(num):
         if i<=j:
             continue
         matrix, lag_matrix = lagged_partial_state_corr(prediction_list[i], prediction_list[j])
+        true_lw.append((len(gt_list[i]), len(gt_list[j])))
         o_matrix_list.append(matrix)
-        adjusted_matrix = match_matrix(matrix, matched_list[i], matched_list[j])
+        adjusted_matrix = match_matrix(matrix, matched_list[i], matched_list[j], len(gt_list[i]))
         p_matrix_list.append(adjusted_matrix)
         lag_matrix_list.append(lag_matrix)
+        
         prediction = retrieve_relation(adjusted_matrix)
         f1, r, p = calculate_f1(gt_list[i], prediction)
         f1_list.append(f1)
@@ -142,16 +146,16 @@ omat = np.zeros((width,width))
 lag = np.zeros((width,width))
 start_row=0
 start_col=0
-for matrix,lagmat,omatrix in zip(p_matrix_list, lag_matrix_list, o_matrix_list):
+for matrix,lagmat,lw in zip(p_matrix_list, lag_matrix_list, true_lw):
     prediction[start_row:start_row+matrix.shape[0],start_col:start_col+matrix.shape[1]]=matrix
     # omat[start_row:start_row+matrix.shape[0],start_col:start_col+matrix.shape[1]]=omatrix
     # lag[start_row:start_row+matrix.shape[0],start_col:start_col+matrix.shape[1]]=lagmat
-    for i in range(6):
+    print(lw)
+    for i in range(lw[0]):
         groundtruth[start_row+i, start_col+i] = True
     start_row+=max(matrix.shape[0],matrix.shape[1])
     start_col+=max(matrix.shape[0],matrix.shape[1])
 
-from sklearn.metrics import f1_score, precision_recall_curve, precision_score, recall_score, roc_curve, auc
 fig, ax = plt.subplots(ncols=3, figsize=(9,3))
 ax[0].imshow(groundtruth)
 ax[1].imshow(prediction)

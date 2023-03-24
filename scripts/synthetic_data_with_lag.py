@@ -1,6 +1,5 @@
 # Created by Chengyu on 2023/3/8.
 import numpy as np
-import pandas as pd
 import os
 from shape import RMDF
 import tqdm
@@ -15,7 +14,7 @@ num_group = 1
 num_ts_in_group = 20
 script_path = os.path.dirname(__file__)
 save_path = os.path.join(script_path, '../data/synthetic_data/')
-dataset_name = 'dataset5'
+dataset_name = 'dataset4'
 random_state = None
 length = 20000
 
@@ -77,11 +76,6 @@ def gen_from_json(seg_json):
     channel_list = [gen_channel_from_json(seg_json) for i in range(channel_num)]
     return np.stack(channel_list).T
 
-seg_json_list = []
-for i in range(num_group):
-    seg_json = generate_seg_json(seg_len, state_num, random_state)
-    seg_json_list.append(seg_json)
-
 def add_lag(seg_json):
     lag = np.random.randint(low=-500, high=500)
     new_seg_json = {}
@@ -113,6 +107,11 @@ def calculate_lag_matrix(drift_array):
                 lag_matrix[j,i]=-lag
     return lag_matrix
 
+seg_json_list = []
+for i in range(num_group):
+    seg_json = generate_seg_json(seg_len, state_num, random_state)
+    seg_json_list.append(seg_json)
+
 drift_array = []
 lagged_seg_json_list = []
 for seg_json in seg_json_list:
@@ -124,9 +123,6 @@ for seg_json in seg_json_list:
 
 lag_matrix = calculate_lag_matrix(np.array(drift_array))
 
-# for lagged_json in lagged_seg_json_list:
-#     print(lagged_json)
-
 full_path = save_path+dataset_name
 if not os.path.exists(full_path):
     os.makedirs(full_path)
@@ -135,7 +131,6 @@ if not os.path.exists(save_path+'state_seq_'+dataset_name):
 
 for i in tqdm.tqdm(range(num_group*num_ts_in_group)):
     data = np.concatenate([gen_from_json(lagged_seg_json_list[i])])
-    print(data.shape)
     state_seq = seg_to_label(lagged_seg_json_list[i])
     np.save(full_path+'/test'+str(i), data)
     np.save(save_path+'state_seq_'+dataset_name+'/test'+str(i), state_seq)

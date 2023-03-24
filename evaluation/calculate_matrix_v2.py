@@ -1,8 +1,9 @@
 import numpy as np
 import os
 from TSpy.corr import state_correlation, lagged_state_correlation
+import matplotlib.pyplot as plt
 
-use_data = 'dataset5'
+use_data = 'dataset2'
 
 script_path = os.path.dirname(__file__)
 data_path = os.path.join(script_path, '../output/'+use_data+'/')
@@ -12,8 +13,6 @@ if not os.path.exists(data_path+'matrix'):
     os.makedirs(data_path+'matrix')
 
 state_seq_list = []
-
-import matplotlib.pyplot as plt
 
 for i in range(20):
     state_seq = np.load(true_state_seq_path+'test'+str(i)+'.npy')
@@ -30,7 +29,7 @@ for i in range(20):
     state_seq_array.append(state_seq)
 
 state_seq_array = np.array(state_seq_array)
-# matrix, lag_matrix = lagged_state_correlation(state_seq_array)
-matrix = state_correlation(state_seq_array)
-np.save(os.path.join(script_path, '../output/'+use_data+'/matrix/matrix.npy'),matrix)
-# np.save(os.path.join(script_path, '../output/'+use_data+'/matrix/lag_matrix.npy'),lag_matrix)
+matrix, lag_matrix = lagged_state_correlation(state_seq_array)
+# matrix = state_correlation(state_seq_array)
+# np.save(os.path.join(script_path, '../output/'+use_data+'/matrix/matrix.npy'),matrix)
+np.save(os.path.join(script_path, '../output/'+use_data+'/matrix/lag_matrix.npy'),lag_matrix)
