@@ -9,13 +9,23 @@ import utils
 import networks
 import losses
 
-# import math
-# import numpy as np
-# import torch
+import math
+import numpy as np
+import torch
+def hanning_numpy(X):
+    length = X.shape[2]
+    weight = (1-np.cos(2*math.pi*np.arange(length)/length))/2
+    # weight = np.cos(2*math.pi*np.arange(length)/length)+0.5
+    return weight*X
+
 # def hanning_numpy(X):
 #     length = X.shape[2]
-#     weight = (1-np.cos(2*math.pi*np.arange(length)/length))/2
-#     # weight = np.cos(2*math.pi*np.arange(length)/length)+0.5
+#     half_len = int(length/2)
+#     quarter_len = int(length/4)
+#     margin_weight = (1-np.cos(2*math.pi*np.arange(half_len)/half_len))/2
+#     weight = np.ones((length,))
+#     weight[:quarter_len] = margin_weight[:quarter_len]
+#     weight[3*quarter_len:] = margin_weight[quarter_len:]
 #     return weight*X
 
 class BasicEncoder():
@@ -412,7 +422,7 @@ class CausalConv_LSE(BasicEncoder):
         for b in range(num_batch):
             for i in range(math.ceil(num_window/window_batch_size)):
                 masking = numpy.array([X[b,:,j:j+win_size] for j in range(step*i*window_batch_size, step*min((i+1)* window_batch_size, num_window),step)])
-                # masking = hanning_numpy(masking)
+                masking = hanning_numpy(masking)
                 # print(masking.shape,step*i*window_batch_size, step*min((i+1)* window_batch_size, num_window))
                 embeddings[b,:,i * window_batch_size: (i + 1) * window_batch_size] = numpy.swapaxes(self.encode(masking[:], batch_size=batch_size), 0, 1)
         return embeddings[0].T

@@ -1,9 +1,9 @@
 import numpy as np
 import os
+import matplotlib.pyplot as plt
 from TSpy.corr import decompose_state_seq, add_lag, score, partial_state_corr
 from TSpy.label import reorder_label
-import matplotlib.pyplot as plt
-from sklearn.metrics import precision_recall_curve, roc_curve, auc
+from sklearn.metrics import precision_recall_curve
 
 use_data = 'dataset4'
 
@@ -12,7 +12,7 @@ data_path = os.path.join(script_path, '../output/'+use_data+'/')
 true_state_seq_path = os.path.join(script_path, '../data/synthetic_data/state_seq_'+use_data+'/')
 figure_output_path = os.path.join(script_path, '../output/figs')
 
-num = 10
+num = 20
 
 def lagged_partial_state_corr(X, Y, atom_step=0.001, max_ratio=0.05):
     length = len(X)
@@ -87,8 +87,10 @@ for i in range(num):
     groundtruth = reorder_label(np.load(true_state_seq_path+'test'+str(i)+'.npy'))
     gt_list.append([(s,s) for s in range(len(set(groundtruth)))])
     prediction = reorder_label(np.load(os.path.join(data_path, 'state_seq/test'+str(i)+'.npy')))
-    ax[i*2].imshow(groundtruth.reshape(-1,1).T, aspect='auto', cmap='tab20c', interpolation='nearest')
-    ax[i*2+1].imshow(prediction.reshape(-1,1).T, aspect='auto', cmap='tab20c', interpolation='nearest')
+    # ax[i*2].imshow(groundtruth.reshape(-1,1).T, aspect='auto', cmap='tab20c', interpolation='nearest')
+    # ax[i*2+1].imshow(prediction.reshape(-1,1).T, aspect='auto', cmap='tab20c', interpolation='nearest')
+    ax[i].imshow(groundtruth.reshape(-1,1).T, aspect='auto', cmap='tab20c', interpolation='nearest')
+    ax[i+num].imshow(prediction.reshape(-1,1).T, aspect='auto', cmap='tab20c', interpolation='nearest')
     matched_pairs = match_index(groundtruth, prediction)
     matched_list.append(matched_pairs)
     prediction_list.append(prediction)
@@ -128,13 +130,13 @@ for i in range(num):
         p_matrix_list.append(adjusted_matrix)
         lag_matrix_list.append(lag_matrix)
         
-        prediction = retrieve_relation(adjusted_matrix)
-        f1, r, p = calculate_f1(gt_list[i], prediction)
-        f1_list.append(f1)
-        r_list.append(r)
-        p_list.append(p)
-        print(f1, r, p)
-print('mean', np.mean(f1_list),np.mean(r_list),np.mean(p_list))
+#         prediction = retrieve_relation(adjusted_matrix)
+#         f1, r, p = calculate_f1(gt_list[i], prediction)
+#         f1_list.append(f1)
+#         r_list.append(r)
+#         p_list.append(p)
+#         print(f1, r, p)
+# print('mean', np.mean(f1_list),np.mean(r_list),np.mean(p_list))
 
 width_list = [max(m.shape[0],m.shape[1]) for m in p_matrix_list]
 width = np.sum(width_list)
@@ -166,11 +168,11 @@ plt.close()
 # print('f1',f1_score(groundtruth.flatten(), (prediction>=0.45).flatten()))
 # print('p',precision_score(groundtruth.flatten(), (prediction>=0.45).flatten()))
 # print('r',recall_score(groundtruth.flatten(), (prediction>=0.45).flatten()))
-fpr, tpr, thread = roc_curve(groundtruth.flatten(), prediction.flatten())
-print(auc(fpr, tpr))
-plt.plot(fpr, tpr, color = 'darkorange')
-plt.savefig(os.path.join(figure_output_path,'roc.png'))
-plt.close()
+# fpr, tpr, thread = roc_curve(groundtruth.flatten(), prediction.flatten())
+# print(auc(fpr, tpr))
+# plt.plot(fpr, tpr, color = 'darkorange')
+# plt.savefig(os.path.join(figure_output_path,'roc.png'))
+# plt.close()
 
 precision, recall, threshold = precision_recall_curve(groundtruth.flatten(), prediction.flatten())
 f1 = 2*precision*recall/(precision+recall)

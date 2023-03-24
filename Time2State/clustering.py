@@ -53,7 +53,7 @@ class DPGMM(BasicClusteringClass):
                                                 covariance_type="full",
                                                 weight_concentration_prior=self.alpha, # alpha
                                                 weight_concentration_prior_type='dirichlet_process',
-                                                max_iter=100).fit(X)
+                                                max_iter=1000).fit(X)
         return dpgmm.predict(X)
 
 class KMeansClustering(BasicClusteringClass):
