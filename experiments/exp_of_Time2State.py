@@ -71,8 +71,8 @@ def exp_on_UCR_SEG(win_size, step, verbose=False):
         result = np.vstack([groundtruth, prediction])
         np.save(os.path.join(out_path,fname[:-4]), result)
         score_list.append(np.array([ari, anmi, nmi]))
-        plot_mulvariate_time_series_and_label_v2(data,groundtruth,prediction)
-        plt.savefig('1.png')
+        # plot_mulvariate_time_series_and_label_v2(data,groundtruth,prediction)
+        # plt.savefig('1.png')
         if verbose:
             print('ID: %s, ARI: %f, ANMI: %f, NMI: %f' %(fname, ari, anmi, nmi))
     score_list = np.vstack(score_list)
@@ -441,10 +441,10 @@ def run_exp():
 if __name__ == '__main__':
     # run_exp()
     # time_start=time.time()
-    # exp_on_UCR_SEG(256, 50, verbose=True)
+    exp_on_UCR_SEG(256, 50, verbose=True)
     # exp_on_MoCap(256, 50, verbose=False)
     # exp_on_PAMAP22(512,100, verbose=True)
-    exp_on_ActRecTut(128, 50, verbose=True)
+    # exp_on_ActRecTut(128, 50, verbose=True)
     # exp_on_synthetic(128, 50, verbose=True)
     # exp_on_USC_HAD2(256, 50, verbose=True)
     # exp_on_USC_HAD(256, 50, verbose=True)

@@ -1,42 +1,18 @@
 import numpy as np
 import os
 import matplotlib.pyplot as plt
-from TSpy.corr import decompose_state_seq, add_lag, score, partial_state_corr
+from TSpy.corr import partial_state_corr, lagged_partial_state_corr
 from TSpy.label import reorder_label
 from sklearn.metrics import precision_recall_curve
 
-use_data = 'dataset4'
+use_data = 'dataset1'
 
 script_path = os.path.dirname(__file__)
 data_path = os.path.join(script_path, '../output/'+use_data+'/')
 true_state_seq_path = os.path.join(script_path, '../data/synthetic_data/state_seq_'+use_data+'/')
 figure_output_path = os.path.join(script_path, '../output/figs')
 
-num = 20
-
-def lagged_partial_state_corr(X, Y, atom_step=0.001, max_ratio=0.05):
-    length = len(X)
-    k = int(max_ratio/atom_step)
-    listX = decompose_state_seq(X)
-    listY = decompose_state_seq(Y)
-    score_matrix = np.zeros((len(listX),len(listY)))
-    lag_matrix = np.zeros((len(listX),len(listY)))
-    for i in range(len(listX)):
-        for j in range(len(listY)):
-            sssX = listX[i]
-            sssY = listY[j]
-            max_score = -1
-            lag = 0
-            for l in range(-k,k+1):
-                lag_len = int(l*atom_step*length)
-                sX, sY = add_lag(sssX, sssY, lag_len)
-                Jscore = score(sX, sY)
-                if Jscore>=max_score:
-                    max_score=Jscore
-                    lag=lag_len
-            score_matrix[i,j] = max_score
-            lag_matrix[i,j] = lag
-    return score_matrix, lag_matrix
+num = 5
 
 def find_match(X, Y, score_matrix):
     matched_pair = {}
@@ -87,10 +63,15 @@ for i in range(num):
     groundtruth = reorder_label(np.load(true_state_seq_path+'test'+str(i)+'.npy'))
     gt_list.append([(s,s) for s in range(len(set(groundtruth)))])
     prediction = reorder_label(np.load(os.path.join(data_path, 'state_seq/test'+str(i)+'.npy')))
-    # ax[i*2].imshow(groundtruth.reshape(-1,1).T, aspect='auto', cmap='tab20c', interpolation='nearest')
-    # ax[i*2+1].imshow(prediction.reshape(-1,1).T, aspect='auto', cmap='tab20c', interpolation='nearest')
+    # [i*2], [i*2+1]
     ax[i].imshow(groundtruth.reshape(-1,1).T, aspect='auto', cmap='tab20c', interpolation='nearest')
     ax[i+num].imshow(prediction.reshape(-1,1).T, aspect='auto', cmap='tab20c', interpolation='nearest')
+    ax[i].set_xlabel('')
+    ax[i+num].set_xlabel('')
+    ax[i].set_xticks([])
+    ax[i].set_yticks([])
+    ax[i+num].set_xticks([])
+    ax[i+num].set_yticks([])
     matched_pairs = match_index(groundtruth, prediction)
     matched_list.append(matched_pairs)
     prediction_list.append(prediction)
@@ -130,13 +111,13 @@ for i in range(num):
         p_matrix_list.append(adjusted_matrix)
         lag_matrix_list.append(lag_matrix)
         
-#         prediction = retrieve_relation(adjusted_matrix)
-#         f1, r, p = calculate_f1(gt_list[i], prediction)
-#         f1_list.append(f1)
-#         r_list.append(r)
-#         p_list.append(p)
-#         print(f1, r, p)
-# print('mean', np.mean(f1_list),np.mean(r_list),np.mean(p_list))
+        prediction = retrieve_relation(adjusted_matrix)
+        f1, r, p = calculate_f1(gt_list[i], prediction)
+        f1_list.append(f1)
+        r_list.append(r)
+        p_list.append(p)
+        print(f1, r, p)
+print('mean', np.mean(f1_list),np.mean(r_list),np.mean(p_list))
 
 width_list = [max(m.shape[0],m.shape[1]) for m in p_matrix_list]
 width = np.sum(width_list)
@@ -152,7 +133,7 @@ for matrix,lagmat,lw in zip(p_matrix_list, lag_matrix_list, true_lw):
     prediction[start_row:start_row+matrix.shape[0],start_col:start_col+matrix.shape[1]]=matrix
     # omat[start_row:start_row+matrix.shape[0],start_col:start_col+matrix.shape[1]]=omatrix
     # lag[start_row:start_row+matrix.shape[0],start_col:start_col+matrix.shape[1]]=lagmat
-    print(lw)
+    # print(lw)
     for i in range(lw[0]):
         groundtruth[start_row+i, start_col+i] = True
     start_row+=max(matrix.shape[0],matrix.shape[1])
