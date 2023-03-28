@@ -14,7 +14,7 @@ use_data = 'dataset2'
 script_path = os.path.dirname(__file__)
 data_path = os.path.join(script_path, '../data/synthetic_data/'+use_data)
 file_list = os.listdir(data_path)
-output_path = os.path.join(script_path, '../output/'+use_data+'/state_seq/')
+output_path = os.path.join(script_path, '../output/output_StateCorr/'+use_data+'/state_seq/')
 
 if not os.path.exists(output_path):
     os.makedirs(output_path)
@@ -33,4 +33,4 @@ params_LSE['kernel_size'] = 3
 for file_name in tqdm.tqdm(file_list):
     data = np.load(os.path.join(data_path, file_name))
     t2s = Time2State(win_size, step, CausalConv_LSE_Adaper(params_LSE), DPGMM(None)).fit(data, win_size, step)
-    np.save(os.path.join(script_path, '../output/'+use_data+'/state_seq/'+file_name[:-4]+'.npy'), t2s.state_seq)
+    np.save(os.path.join(script_path, '../output/output_StateCorr/'+use_data+'/state_seq/'+file_name[:-4]+'.npy'), t2s.state_seq)

@@ -27,8 +27,8 @@ for method in method_list:
             prediction_list.append(prediction)
     
     # calculate correlation matrix and lag matrix
-    # matrix, lag_matrix = lagged_state_correlation(prediction_list)
-    # print(matrix.shape, lag_matrix.shape)
+    matrix, lag_matrix = lagged_state_correlation(prediction_list)
+    print(matrix.shape, lag_matrix.shape)
 
     groundtruth_matrix = np.zeros((3*num_in_group,3*num_in_group))
     plt.imshow(groundtruth_matrix)
