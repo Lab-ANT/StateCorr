@@ -16,7 +16,7 @@ for method in method_list:
         data_path = os.path.join(script_path, '../output/output_'+method+'/'+use_data+'/')
         true_state_seq_path = os.path.join(script_path, '../data/synthetic_data/state_seq_'+use_data+'/')
         figure_output_path = os.path.join(script_path, '../output/output_'+method+'/figs')
-        matrix_save_path = os.path.join(script_path, '../output/output_'+method+'/matrix_RQ1')
+        matrix_save_path = os.path.join(script_path, '../output/output_'+method+'/matrix_RQ2')
 
         if not os.path.exists(figure_output_path):
             os.makedirs(figure_output_path)
