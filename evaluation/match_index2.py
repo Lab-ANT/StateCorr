@@ -5,7 +5,7 @@ from TSpy.corr import partial_state_corr, lagged_partial_state_corr
 from TSpy.label import reorder_label
 from sklearn.metrics import precision_recall_curve
 
-use_data = 'dataset4'
+use_data = 'dataset1'
 
 script_path = os.path.dirname(__file__)
 data_path = os.path.join(script_path, '../output/'+use_data+'/')
@@ -63,6 +63,7 @@ for i in range(num):
     groundtruth = reorder_label(np.load(true_state_seq_path+'test'+str(i)+'.npy'))
     gt_list.append([(s,s) for s in range(len(set(groundtruth)))])
     prediction = reorder_label(np.load(os.path.join(data_path, 'state_seq/test'+str(i)+'.npy')))
+    # print(groundtruth.shape, prediction.shape)
     # [i*2], [i*2+1]
     ax[i].imshow(groundtruth.reshape(-1,1).T, aspect='auto', cmap='tab20c', interpolation='nearest')
     ax[i+num].imshow(prediction.reshape(-1,1).T, aspect='auto', cmap='tab20c', interpolation='nearest')
@@ -78,24 +79,24 @@ for i in range(num):
 plt.savefig(os.path.join(figure_output_path,'seg.png'))
 plt.close()
 
-def calculate_f1(G,P):
-    U = list(set(G+P))
-    TP, FP, FN = 0,0,0
-    for r in U:
-        if r in G and r in P:
-            TP+=1
-        elif r in G and r not in P:
-            FN+=1
-        elif r in P and r not in G:
-            FP+=1
-    recall=TP/(TP+FN)
-    precision=TP/(TP+FP)
-    f1=2*recall*precision/(recall+precision)
-    return f1, recall, precision
+# def calculate_f1(G,P):
+#     U = list(set(G+P))
+#     TP, FP, FN = 0,0,0
+#     for r in U:
+#         if r in G and r in P:
+#             TP+=1
+#         elif r in G and r not in P:
+#             FN+=1
+#         elif r in P and r not in G:
+#             FP+=1
+#     recall=TP/(TP+FN)
+#     precision=TP/(TP+FP)
+#     f1=2*recall*precision/(recall+precision)
+#     return f1, recall, precision
 
-f1_list=[]
-r_list=[]
-p_list=[]
+# f1_list=[]
+# r_list=[]
+# p_list=[]
 p_matrix_list = []
 o_matrix_list = []
 lag_matrix_list = []
@@ -111,13 +112,13 @@ for i in range(num):
         p_matrix_list.append(adjusted_matrix)
         lag_matrix_list.append(lag_matrix)
         
-        prediction = retrieve_relation(adjusted_matrix)
-        f1, r, p = calculate_f1(gt_list[i], prediction)
-        f1_list.append(f1)
-        r_list.append(r)
-        p_list.append(p)
-        print(f1, r, p)
-print('mean', np.mean(f1_list),np.mean(r_list),np.mean(p_list))
+#         prediction = retrieve_relation(adjusted_matrix)
+#         f1, r, p = calculate_f1(gt_list[i], prediction)
+#         f1_list.append(f1)
+#         r_list.append(r)
+#         p_list.append(p)
+#         print(f1, r, p)
+# print('mean', np.mean(f1_list),np.mean(r_list),np.mean(p_list))
 
 width_list = [max(m.shape[0],m.shape[1]) for m in p_matrix_list]
 width = np.sum(width_list)

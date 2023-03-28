@@ -8,13 +8,13 @@ from TSpy.label import seg_to_label
 # configuration
 channel_num = 4
 # seg_num = 20
-seg_len = [500, 1000] # 200~1000
+seg_len = [800, 1200] # 200~1000
 state_num = [4, 8] # 4~8
 num_group = 1
 num_ts_in_group = 20
 script_path = os.path.dirname(__file__)
 save_path = os.path.join(script_path, '../data/synthetic_data/')
-dataset_name = 'dataset5'
+dataset_name = 'dataset2'
 random_state = None
 length = 20000
 
@@ -134,4 +134,5 @@ for i in tqdm.tqdm(range(num_group*num_ts_in_group)):
     state_seq = seg_to_label(lagged_seg_json_list[i])
     np.save(full_path+'/test'+str(i), data)
     np.save(save_path+'state_seq_'+dataset_name+'/test'+str(i), state_seq)
+    print(state_seq.shape)
 np.save(save_path+'lag_matrix_'+dataset_name, lag_matrix)
