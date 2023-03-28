@@ -397,7 +397,7 @@ class CausalConv_LSE(BasicEncoder):
         self.network = self.network.train()
         return features
 
-    def encode_window(self, X, win_size=128, batch_size=50, window_batch_size=1000, step=10):
+    def encode_window(self, X, win_size=128, batch_size=500, window_batch_size=1000, step=10):
         """
         Outputs the representations associated to the input by the encoder,
         for each subseries of the input of the given size (sliding window

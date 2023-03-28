@@ -9,7 +9,7 @@ from Time2State.adapers import *
 from Time2State.clustering import *
 from Time2State.default_params import *
 
-use_data = 'dataset1'
+use_data = 'dataset5'
 
 script_path = os.path.dirname(__file__)
 data_path = os.path.join(script_path, '../data/synthetic_data/'+use_data)

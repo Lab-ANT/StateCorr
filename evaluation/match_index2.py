@@ -5,14 +5,14 @@ from TSpy.corr import partial_state_corr, lagged_partial_state_corr
 from TSpy.label import reorder_label
 from sklearn.metrics import precision_recall_curve
 
-use_data = 'dataset1'
+use_data = 'dataset4'
 
 script_path = os.path.dirname(__file__)
 data_path = os.path.join(script_path, '../output/'+use_data+'/')
 true_state_seq_path = os.path.join(script_path, '../data/synthetic_data/state_seq_'+use_data+'/')
 figure_output_path = os.path.join(script_path, '../output/figs')
 
-num = 5
+num = 20
 
 def find_match(X, Y, score_matrix):
     matched_pair = {}
