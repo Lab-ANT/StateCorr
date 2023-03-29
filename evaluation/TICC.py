@@ -11,10 +11,9 @@ from Time2State.adapers import *
 from Time2State.clustering import *
 from Time2State.default_params import *
 
-use_data = 'dataset2'
+# use_data = 'dataset2'
 
 script_path = os.path.dirname(__file__)
-
 
 def use_StateCorr(use_data):
     data_path = os.path.join(script_path, '../data/synthetic_data/'+use_data)

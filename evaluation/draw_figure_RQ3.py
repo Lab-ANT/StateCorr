@@ -7,6 +7,10 @@ from TSpy.label import reorder_label
 num = 5
 method_list = ['StateCorr', 'TICC']
 script_path = os.path.dirname(__file__)
+fig_save_path = os.path.join(script_path, '../output/figs/')
+
+if not os.path.exists(fig_save_path):
+    os.makedirs(fig_save_path)
 
 def evaluate(method_name, dataset_name):
     data_path = os.path.join(script_path, '../output/output_'+method_name+'/'+dataset_name+'/')
@@ -99,7 +103,7 @@ def evaluate_RQ3():
     plt.xticks([0.2,0.4,0.6,0.8,1.0],fontsize=14)
     plt.yticks([0.2,0.4,0.6,0.8,1.0],fontsize=14)
     plt.legend()
-    plt.savefig(os.path.join(fig_output_path,'prc_RQ3.png'))
+    plt.savefig(os.path.join(fig_save_path, 'prc_RQ3.png'))
     plt.close()
 
 # evaluate('StateCorr', 'dataset4')
