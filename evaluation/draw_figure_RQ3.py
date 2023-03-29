@@ -64,6 +64,8 @@ def evaluate(method_name, dataset_name):
     return groundtruth_matrix, prediction_matrix
 
 def evaluate_RQ3():
+    precision_list = []
+    recall_list = []
     for method_name in method_list:
         fig_output_path= os.path.join(script_path, '../output/output_'+method_name+'/figs')
         if not os.path.exists(fig_output_path):
@@ -78,22 +80,27 @@ def evaluate_RQ3():
         groundtruth = np.concatenate(gt_list)
         prediction = np.concatenate(p_list)
         print(groundtruth.shape, prediction.shape)
-        precision, recall, threshold = precision_recall_curve(groundtruth_matrix.flatten(), prediction_matrix.flatten())
+        precision, recall, threshold = precision_recall_curve(groundtruth.flatten(), prediction.flatten())
         f1 = 2*precision*recall/(precision+recall)
+        precision_list.append(precision)
+        recall_list.append(recall)
         f1[np.isnan(f1)]=0
         idx = np.argmax(f1)
         print('Best (F1-score, P, R) of '+method_name+': ', f1[idx], precision[idx], recall[idx])
-        # draw PRC curve
-        plt.style.use('classic')
-        plt.grid()
-        plt.plot(precision, recall, lw=2)
-        plt.xlabel('Recall',fontsize=18)
-        plt.ylabel('Precision',fontsize=18)
-        plt.xticks([0.2,0.4,0.6,0.8,1.0],fontsize=14)
-        plt.yticks([0.2,0.4,0.6,0.8,1.0],fontsize=14)
-        plt.savefig(os.path.join(fig_output_path,'prc_RQ3.png'))
-        plt.close()
 
+    # draw PRC curve
+    plt.style.use('classic')
+    plt.grid()
+    for i, method_name in enumerate(method_list):
+        print(i)
+        plt.plot(precision_list[i], recall_list[i], lw=2, label=method_name)
+    plt.xlabel('Recall',fontsize=18)
+    plt.ylabel('Precision',fontsize=18)
+    plt.xticks([0.2,0.4,0.6,0.8,1.0],fontsize=14)
+    plt.yticks([0.2,0.4,0.6,0.8,1.0],fontsize=14)
+    plt.legend()
+    plt.savefig(os.path.join(fig_output_path,'prc_RQ3.png'))
+    plt.close()
 
 # evaluate('StateCorr', 'dataset4')
 evaluate_RQ3()
