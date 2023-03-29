@@ -1,9 +1,7 @@
 import numpy as np
 import os
-import matplotlib.pyplot as plt
 from TSpy.corr import partial_state_corr, lagged_partial_state_corr
 from TSpy.label import reorder_label
-from sklearn.metrics import precision_recall_curve
 
 num_in_group = 5
 num = 5
@@ -53,8 +51,7 @@ def match_matrix(matrix, x, y, lw):
 def evaluate(method_name, dataset_name):
     data_path = os.path.join(script_path, '../output/output_'+method_name+'/'+dataset_name+'/')
     true_state_seq_path = os.path.join(script_path, '../data/synthetic_data/state_seq_'+dataset_name+'/')
-    # figure_output_path = os.path.join(script_path, '../output/output_'+method_name+'/figs')
-    matrix_save_path = os.path.join(script_path, '../output/output_'+method_name+'/matrix_RQ3')
+    matrix_save_path = os.path.join(script_path, '../output/output_'+method_name+'/'+dataset_name+'/matrix_RQ3')
 
     if not os.path.exists(matrix_save_path):
         os.makedirs(matrix_save_path)
@@ -82,6 +79,7 @@ def evaluate(method_name, dataset_name):
             if i<=j:
                 continue
             matrix, lag_matrix = lagged_partial_state_corr(prediction_list[i], prediction_list[j])
+            print(matrix)
             true_lw.append((len(gt_list[i]), len(gt_list[j])))
             adjusted_matrix = match_matrix(matrix, matched_list[i], matched_list[j], len(gt_list[i]))
             p_matrix_list.append(adjusted_matrix)
@@ -107,24 +105,10 @@ def evaluate(method_name, dataset_name):
 
     np.save(os.path.join(matrix_save_path, 'groundtruth_matrix.npy'), groundtruth_matrix)
     np.save(os.path.join(matrix_save_path, 'prediction_matrix.npy'), prediction_matrix)
-    # fig, ax = plt.subplots(ncols=2, figsize=(9,3))
-    # ax[0].imshow(groundtruth_matrix)
-    # ax[1].imshow(prediction_matrix)
-    # plt.savefig(os.path.join(figure_output_path,'mat.png'))
-    # plt.close()
 
-    # precision, recall, threshold = precision_recall_curve(groundtruth_matrix.flatten(), prediction_matrix.flatten())
-    # f1 = 2*precision*recall/(precision+recall)
-    # idx = np.argmax(f1)
-    # print('max', f1[idx], precision[idx], recall[idx])
-    # plt.style.use('classic')
-    # plt.grid()
-    # plt.plot(precision, recall, lw=2)
-    # plt.xlabel('Recall',fontsize=18)
-    # plt.ylabel('Precision',fontsize=18)
-    # plt.xticks([0.2,0.4,0.6,0.8,1.0],fontsize=14)
-    # plt.yticks([0.2,0.4,0.6,0.8,1.0],fontsize=14)
-    # plt.savefig(os.path.join(figure_output_path,'prc.png'))
-    # plt.close()
+# evaluate('StateCorr', 'dataset1')
 
-evaluate('StateCorr', 'dataset1')
+for method_name in method_list:
+    for i in range(1, num+1):
+        print(method_name, i)
+        evaluate(method_name, 'dataset'+str(i))
