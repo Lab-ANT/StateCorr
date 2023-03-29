@@ -106,9 +106,11 @@ def evaluate(method_name, dataset_name):
     np.save(os.path.join(matrix_save_path, 'groundtruth_matrix.npy'), groundtruth_matrix)
     np.save(os.path.join(matrix_save_path, 'prediction_matrix.npy'), prediction_matrix)
 
-# evaluate('StateCorr', 'dataset1')
+def evaluate_RQ3():
+    for method_name in method_list:
+        for i in range(1, num+1):
+            print(method_name, i)
+            evaluate(method_name, 'dataset'+str(i))
 
-for method_name in method_list:
-    for i in range(1, num+1):
-        print(method_name, i)
-        evaluate(method_name, 'dataset'+str(i))
+# evaluate('StateCorr', 'dataset1')
+evaluate_RQ3()

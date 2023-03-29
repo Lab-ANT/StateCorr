@@ -11,7 +11,8 @@ script_path = os.path.dirname(__file__)
 def evaluate(method_name, dataset_name):
     data_path = os.path.join(script_path, '../output/output_'+method_name+'/'+dataset_name+'/')
     true_state_seq_path = os.path.join(script_path, '../data/synthetic_data/state_seq_'+dataset_name+'/')
-    figure_output_path = os.path.join(script_path, '../output/output_'+method_name+'/'+dataset_name+'/figs')
+    # figure_output_path = os.path.join(script_path, '../output/output_'+method_name+'/'+dataset_name+'/figs')
+    figure_output_path = os.path.join(script_path, '../output/output_'+method_name+'/figs')
     matrix_save_path = os.path.join(script_path, '../output/output_'+method_name+'/'+dataset_name+'/matrix_RQ3')
 
     if not os.path.exists(figure_output_path):
@@ -30,17 +31,18 @@ def evaluate(method_name, dataset_name):
         ax[i].set_yticks([])
         ax[i+num].set_xticks([])
         ax[i+num].set_yticks([])
-    plt.savefig(os.path.join(figure_output_path,'seg.png'))
+    plt.savefig(os.path.join(figure_output_path,'seg_'+dataset_name+'.png'))
     plt.close()
 
     # draw matrixs
     groundtruth_matrix = np.load(os.path.join(matrix_save_path, 'groundtruth_matrix.npy'))
     prediction_matrix = np.load(os.path.join(matrix_save_path, 'prediction_matrix.npy'))
-    fig, ax = plt.subplots(ncols=2, figsize=(8,4))
-    ax[0].imshow(groundtruth_matrix)
-    ax[1].imshow(prediction_matrix)
-    plt.savefig(os.path.join(figure_output_path,'mat.png'))
-    plt.close()
+    # print(groundtruth_matrix.shape, prediction_matrix.shape)
+    # fig, ax = plt.subplots(ncols=2, figsize=(8,4))
+    # ax[0].imshow(groundtruth_matrix)
+    # ax[1].imshow(prediction_matrix)
+    # plt.savefig(os.path.join(figure_output_path,'mat_'+dataset_name+'.png'))
+    # plt.close()
 
     precision, recall, threshold = precision_recall_curve(groundtruth_matrix.flatten(), prediction_matrix.flatten())
     f1 = 2*precision*recall/(precision+recall)
@@ -56,11 +58,42 @@ def evaluate(method_name, dataset_name):
     plt.ylabel('Precision',fontsize=18)
     plt.xticks([0.2,0.4,0.6,0.8,1.0],fontsize=14)
     plt.yticks([0.2,0.4,0.6,0.8,1.0],fontsize=14)
-    plt.savefig(os.path.join(figure_output_path,'prc_RQ3.png'))
+    plt.savefig(os.path.join(figure_output_path,'prc_'+dataset_name+'_RQ3.png'))
     plt.close()
 
-# evaluate('StateCorr', 'dataset4')
+    return groundtruth_matrix, prediction_matrix
 
-for method_name in method_list:
-    for i in range(1, num+1):
-        evaluate(method_name, 'dataset'+str(i))
+def evaluate_RQ3():
+    for method_name in method_list:
+        fig_output_path= os.path.join(script_path, '../output/output_'+method_name+'/figs')
+        if not os.path.exists(fig_output_path):
+            os.makedirs(fig_output_path)
+        gt_list = []
+        p_list = []
+        for i in range(1, num+1):
+            print(method_name, i)
+            groundtruth_matrix, prediction_matrix = evaluate(method_name, 'dataset'+str(i))
+            gt_list.append(groundtruth_matrix.flatten())
+            p_list.append(prediction_matrix.flatten())
+        groundtruth = np.concatenate(gt_list)
+        prediction = np.concatenate(p_list)
+        print(groundtruth.shape, prediction.shape)
+        precision, recall, threshold = precision_recall_curve(groundtruth_matrix.flatten(), prediction_matrix.flatten())
+        f1 = 2*precision*recall/(precision+recall)
+        f1[np.isnan(f1)]=0
+        idx = np.argmax(f1)
+        print('Best (F1-score, P, R) of '+method_name+': ', f1[idx], precision[idx], recall[idx])
+        # draw PRC curve
+        plt.style.use('classic')
+        plt.grid()
+        plt.plot(precision, recall, lw=2)
+        plt.xlabel('Recall',fontsize=18)
+        plt.ylabel('Precision',fontsize=18)
+        plt.xticks([0.2,0.4,0.6,0.8,1.0],fontsize=14)
+        plt.yticks([0.2,0.4,0.6,0.8,1.0],fontsize=14)
+        plt.savefig(os.path.join(fig_output_path,'prc_RQ3.png'))
+        plt.close()
+
+
+# evaluate('StateCorr', 'dataset4')
+evaluate_RQ3()
