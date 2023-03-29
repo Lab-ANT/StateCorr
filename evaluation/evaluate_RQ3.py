@@ -3,7 +3,7 @@ import os
 from TSpy.corr import partial_state_corr, lagged_partial_state_corr
 from TSpy.label import reorder_label
 
-num_in_group = 5
+num_in_group = 20
 num = 5
 method_list = ['StateCorr', 'TICC']
 script_path = os.path.dirname(__file__)
@@ -60,7 +60,7 @@ def evaluate(method_name, dataset_name):
     prediction_list = []
     gt_list = []
 
-    for i in range(num):
+    for i in range(num_in_group):
         # for some methods, prediction may be shorter than ground truth
         # but the difference is extremely small, we can simply cut the ground truth
         prediction = reorder_label(np.load(os.path.join(data_path, 'state_seq/test'+str(i)+'.npy')))
@@ -74,12 +74,12 @@ def evaluate(method_name, dataset_name):
     p_matrix_list = []
     # lag_matrix_list = []
     true_lw = []
-    for i in range(num):
-        for j in range(num):
+    for i in range(num_in_group):
+        for j in range(num_in_group):
             if i<=j:
                 continue
             matrix, lag_matrix = lagged_partial_state_corr(prediction_list[i], prediction_list[j])
-            print(matrix)
+            # print(matrix)
             true_lw.append((len(gt_list[i]), len(gt_list[j])))
             adjusted_matrix = match_matrix(matrix, matched_list[i], matched_list[j], len(gt_list[i]))
             p_matrix_list.append(adjusted_matrix)
