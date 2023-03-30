@@ -1,7 +1,6 @@
 large_data
 __pycache__
 saved_results
-Baselines/AutoPlait/output
 .ipynb_checkpoints
 *.npy
 *.npz
@@ -28,6 +27,11 @@ case_study2
 data
 output
 supplements
-Baselines
-!Baselines/TICC
-!Baselines/AutoPlait
+ClaSP
+HVGH
+pyhsmm2
+REDSDS
+ts2vec
+Baselines/evaluation_hsmm.py
+Baselines/hdphsmm.py
+Baselines/hdp-hsmm.py
