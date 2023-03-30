@@ -5,7 +5,7 @@ from sklearn.metrics import precision_recall_curve
 from TSpy.label import reorder_label
 
 num = 5
-method_list = ['StateCorr', 'TICC']
+method_list = ['StateCorr', 'TICC', 'AutoPlait']
 script_path = os.path.dirname(__file__)
 fig_save_path = os.path.join(script_path, '../output/figs/')
 

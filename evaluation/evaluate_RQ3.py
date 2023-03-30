@@ -5,7 +5,7 @@ from TSpy.label import reorder_label
 
 num_in_group = 20
 num = 5
-method_list = ['StateCorr', 'TICC']
+method_list = ['AutoPlait', 'StateCorr', 'TICC']
 script_path = os.path.dirname(__file__)
 
 def find_match(score_matrix):
