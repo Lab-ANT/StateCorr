@@ -25,7 +25,6 @@ def use_StateCorr(use_data):
     win_size = 256
     step = 50
 
-    params_LSE['in_channels'] = 4
     params_LSE['M'] = 10
     params_LSE['N'] = 4
     params_LSE['out_channels'] = 2
@@ -35,6 +34,7 @@ def use_StateCorr(use_data):
 
     for file_name in tqdm.tqdm(file_list):
         data = np.load(os.path.join(data_path, file_name))
+        params_LSE['in_channels'] = data.shape[1]
         t2s = Time2State(win_size, step, CausalConv_LSE_Adaper(params_LSE), DPGMM(None)).fit(data, win_size, step)
         np.save(os.path.join(script_path, '../output/output_StateCorr/'+use_data+'/state_seq/'+file_name[:-4]+'.npy'), t2s.state_seq)
 
@@ -77,6 +77,6 @@ def use_HDPHSMM(use_data):
 
 for i in range(1,6):
     dataset_name = 'dataset'+str(i)
-    use_HDPHSMM(dataset_name)
-    # use_StateCorr(dataset_name)
+    # use_HDPHSMM(dataset_name)
+    use_StateCorr(dataset_name)
     # use_TICC(dataset_name)
