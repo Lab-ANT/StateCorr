@@ -5,7 +5,7 @@ from TSpy.label import reorder_label
 from sklearn.metrics import precision_recall_curve
 
 num_in_group = 5
-method_list = ['ClaSP', 'StateCorr', 'TICC', 'AutoPlait']
+method_list = ['StateCorr', 'TICC', 'AutoPlait', 'ClaSP', 'HDP-HSMM']
 
 for method in method_list:
     prediction_list = []

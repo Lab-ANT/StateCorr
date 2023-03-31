@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import precision_recall_curve
 
 num_in_group = 5
-method_list = ['StateCorr']
+method_list = ['StateCorr', 'TICC', 'AutoPlait', 'ClaSP', 'HDP-HSMM']
 
 for method in method_list:
     prediction_list = []
@@ -15,7 +15,7 @@ for method in method_list:
         data_path = os.path.join(script_path, '../output/output_'+method+'/'+use_data+'/')
         true_state_seq_path = os.path.join(script_path, '../data/synthetic_data/state_seq_'+use_data+'/')
         figure_output_path = os.path.join(script_path, '../output/output_'+method+'/figs')
-        matrix_save_path = os.path.join(script_path, '../output/output_'+method+'/matrix_RQ1')
+        matrix_save_path = os.path.join(script_path, '../output/output_'+method+'/matrix_RQ2')
     
     groundtruth_matrix = np.load(os.path.join(matrix_save_path, 'groundtruth_matrix.npy'))
     prediction_matrix = np.load(os.path.join(matrix_save_path, 'prediction_matrix.npy'))
