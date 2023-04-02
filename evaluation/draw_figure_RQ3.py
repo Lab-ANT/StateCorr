@@ -6,7 +6,7 @@ from TSpy.label import reorder_label
 
 num = 5
 # method_list = ['StateCorr', 'TICC', 'AutoPlait', 'ClaSP', 'HDP-HSMM']
-method_list = ['StateCorr']
+method_list = ['StateCorr', 'TICC']
 script_path = os.path.dirname(__file__)
 fig_save_path = os.path.join(script_path, '../output/figs/')
 
@@ -43,11 +43,11 @@ def evaluate(method_name, dataset_name):
     groundtruth_matrix = np.load(os.path.join(matrix_save_path, 'groundtruth_matrix.npy'))
     prediction_matrix = np.load(os.path.join(matrix_save_path, 'prediction_matrix.npy'))
     # print(groundtruth_matrix.shape, prediction_matrix.shape)
-    # fig, ax = plt.subplots(ncols=2, figsize=(8,4))
-    # ax[0].imshow(groundtruth_matrix)
-    # ax[1].imshow(prediction_matrix)
-    # plt.savefig(os.path.join(figure_output_path,'mat_'+dataset_name+'.png'))
-    # plt.close()
+    fig, ax = plt.subplots(ncols=2, figsize=(8,4))
+    ax[0].imshow(groundtruth_matrix)
+    ax[1].imshow(prediction_matrix)
+    plt.savefig(os.path.join(figure_output_path,'mat_'+dataset_name+'.png'))
+    plt.close()
 
     precision, recall, threshold = precision_recall_curve(groundtruth_matrix.flatten(), prediction_matrix.flatten())
     f1 = 2*precision*recall/(precision+recall)
@@ -56,7 +56,7 @@ def evaluate(method_name, dataset_name):
     # print('Best (F1-score, P, R) of '+method_name+' on '+dataset_name+': ', f1[idx], precision[idx], recall[idx])
 
     # draw PRC curve
-    plt.style.use('classic')
+    # plt.style.use('classic')
     plt.grid()
     plt.plot(precision, recall, lw=2)
     plt.xlabel('Recall',fontsize=18)

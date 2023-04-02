@@ -2,11 +2,12 @@ import numpy as np
 import os
 from TSpy.corr import partial_state_corr, lagged_partial_state_corr
 from TSpy.label import reorder_label
+from TSpy.eval import ARI
 
-num_in_group = 5
+num_in_group = 3
 num = 5
 # method_list = ['HDP-HSMM', 'ClaSP', 'AutoPlait', 'StateCorr', 'TICC']
-method_list = ['StateCorr']
+method_list = ['StateCorr', 'TICC']
 script_path = os.path.dirname(__file__)
 
 def find_match(score_matrix):
@@ -66,6 +67,7 @@ def evaluate(method_name, dataset_name):
         # but the difference is extremely small, we can simply cut the ground truth
         prediction = reorder_label(np.load(os.path.join(data_path, 'state_seq/test'+str(i)+'.npy')))
         groundtruth = reorder_label(np.load(true_state_seq_path+'test'+str(i)+'.npy')[:len(prediction)])
+        print(ARI(prediction, groundtruth))
         gt_list.append([(s,s) for s in range(len(set(groundtruth)))])
         # find matched pairs
         matched_pairs = match_index(groundtruth, prediction)

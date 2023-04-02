@@ -9,7 +9,7 @@ from scipy import io
 channel_num = 4
 # seg_num = 20
 seg_len = [800, 1200] # 200~1000
-state_num = [4, 5] # 4~8
+state_num = [6, 7] # 4~8
 num_group = 1
 num_ts_in_group = 5
 script_path = os.path.dirname(__file__)
@@ -64,8 +64,7 @@ def load_USC_HAD_as_classification_dataset(subject, target, dataset_path):
         data = io.loadmat(prefix+fname_prefix+str(i)+fname_postfix)
         data = data['sensor_readings']
         data_list.append(data)
-        # print(data.shape)
-    return data_list
+    return data_list[:7]
 
 def load_ActRecTut(use_data):
     dir_name = use_data
@@ -93,11 +92,11 @@ def load_ActRecTut_as_classification_dataset(use_state=None):
     for state in use_state:
         idx = np.argwhere(groundtruth==state)
         data_list.append(data[idx].squeeze(1))
-    return data_list
+    return data_list[2:]
 
 def gen_channel_from_json(seg_json):
-    # class_list = load_USC_HAD_as_classification_dataset(1,1,data_path)
-    class_list = load_ActRecTut_as_classification_dataset(None)
+    class_list = load_USC_HAD_as_classification_dataset(1,1,data_path)
+    # class_list = load_ActRecTut_as_classification_dataset(None)
     state_list = [seg_json[seg] for seg in seg_json]
     seg_len_list = np.array([seg for seg in seg_json])
     first_seg_len = seg_len_list[0]

@@ -18,7 +18,6 @@ def load_USC_HAD_as_classification_dataset(subject, target, dataset_path):
         data = io.loadmat(prefix+fname_prefix+str(i)+fname_postfix)
         data = data['sensor_readings']
         data_list.append(data)
-        # print(data.shape)
     return data_list
 
 def load_ActRecTut(use_data):
@@ -49,7 +48,8 @@ def load_ActRecTut_as_classification_dataset(use_state=None):
         data_list.append(data[idx].squeeze(1))
     return data_list
 
-data = load_ActRecTut_as_classification_dataset(None)
+# data = load_ActRecTut_as_classification_dataset(None)
+data = load_USC_HAD_as_classification_dataset(1, 1, data_path)
 
 num_states = len(data)
 fig, ax = plt.subplots(nrows=num_states)
