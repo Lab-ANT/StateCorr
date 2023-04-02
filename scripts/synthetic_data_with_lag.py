@@ -14,7 +14,7 @@ num_group = 1
 num_ts_in_group = 20
 script_path = os.path.dirname(__file__)
 save_path = os.path.join(script_path, '../data/synthetic_data/')
-dataset_name = 'dataset2'
+dataset_name = 'dataset5'
 random_state = None
 length = 20000
 
@@ -66,7 +66,7 @@ def gen_channel_from_json(seg_json):
         rmdf.gen_anchor()
     seg_list = []
     for state, seg_len in zip(state_list, seg_len_list):
-        seg = [rmdf_list[state].gen(forking_depth=1, length=100) for i in range(15)]
+        seg = [rmdf_list[state].gen(forking_depth=1, length=200) for i in range(15)]
         seg_list.append(np.concatenate(seg)[:seg_len])
     result = np.concatenate(seg_list)
     return result

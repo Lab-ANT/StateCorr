@@ -2,20 +2,20 @@
 import numpy as np
 import os
 import tqdm
-from TSpy.label import seg_to_label
+from TSpy.label import seg_to_label, reorder_label, compact
 from scipy import io
 
 # configuration
 channel_num = 4
 # seg_num = 20
 seg_len = [800, 1200] # 200~1000
-state_num = [4, 8] # 4~8
+state_num = [4, 5] # 4~8
 num_group = 1
-num_ts_in_group = 20
+num_ts_in_group = 5
 script_path = os.path.dirname(__file__)
 data_path = os.path.join(script_path, '../data/')
 save_path = os.path.join(script_path, '../data/synthetic_data/')
-dataset_name = 'dataset5'
+dataset_name = 'dataset1'
 random_state = None
 length = 20000
 
@@ -67,8 +67,37 @@ def load_USC_HAD_as_classification_dataset(subject, target, dataset_path):
         # print(data.shape)
     return data_list
 
+def load_ActRecTut(use_data):
+    dir_name = use_data
+    dataset_path = os.path.join(data_path,'ActRecTut/'+dir_name+'/data.mat')
+    data = io.loadmat(dataset_path)
+    groundtruth = data['labels'].flatten()
+    groundtruth = reorder_label(groundtruth)
+    data = data['data'][:,0:10]
+    return data, groundtruth
+
+def load_ActRecTut_as_classification_dataset(use_state=None):
+    data1, groundtruth1 = load_ActRecTut('subject1_walk')
+    data2, groundtruth2 = load_ActRecTut('subject2_walk')
+
+    data = np.concatenate([data1, data2])
+    groundtruth = np.concatenate([groundtruth1, groundtruth2])
+    # print(data.shape, groundtruth.shape)
+
+    num_states = len(set(groundtruth))
+    
+    if use_state is None:
+        use_state = [i for i in range(num_states)]
+
+    data_list = []
+    for state in use_state:
+        idx = np.argwhere(groundtruth==state)
+        data_list.append(data[idx].squeeze(1))
+    return data_list
+
 def gen_channel_from_json(seg_json):
-    class_list = load_USC_HAD_as_classification_dataset(1,1,data_path)
+    # class_list = load_USC_HAD_as_classification_dataset(1,1,data_path)
+    class_list = load_ActRecTut_as_classification_dataset(None)
     state_list = [seg_json[seg] for seg in seg_json]
     seg_len_list = np.array([seg for seg in seg_json])
     first_seg_len = seg_len_list[0]
@@ -78,18 +107,13 @@ def gen_channel_from_json(seg_json):
     for state, seg_len in zip(state_list, seg_len_list):
         seg = class_list[state][:seg_len]
         seg_list.append(seg)
-        # seg = [rmdf_list[state].gen(forking_depth=1, length=100) for i in range(15)]
-        # seg_list.append(np.concatenate(seg)[:seg_len])
     result = np.concatenate(seg_list)
     return result
 
 def gen_from_json(seg_json):
-    # generate channel respectively.
     data = gen_channel_from_json(seg_json)
-    print(data.shape)
+    # print(data.shape)
     return data
-    # channel_list = [gen_channel_from_json(seg_json) for i in range(channel_num)]
-    # return np.stack(channel_list).T
 
 def add_lag(seg_json):
     lag = np.random.randint(low=-500, high=500)
@@ -147,7 +171,6 @@ if not os.path.exists(save_path+'state_seq_'+dataset_name):
 for i in tqdm.tqdm(range(num_group*num_ts_in_group)):
     data = gen_from_json(lagged_seg_json_list[i])
     print(data.shape)
-    data = np.concatenate([gen_from_json(lagged_seg_json_list[i])])
     state_seq = seg_to_label(lagged_seg_json_list[i])
     np.save(full_path+'/test'+str(i), data)
     np.save(save_path+'state_seq_'+dataset_name+'/test'+str(i), state_seq)

@@ -77,6 +77,6 @@ def use_HDPHSMM(use_data):
 
 for i in range(1,6):
     dataset_name = 'dataset'+str(i)
-    # use_HDPHSMM(dataset_name)
+    use_HDPHSMM(dataset_name)
     use_StateCorr(dataset_name)
-    # use_TICC(dataset_name)
+    use_TICC(dataset_name)

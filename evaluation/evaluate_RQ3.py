@@ -3,9 +3,10 @@ import os
 from TSpy.corr import partial_state_corr, lagged_partial_state_corr
 from TSpy.label import reorder_label
 
-num_in_group = 20
+num_in_group = 5
 num = 5
-method_list = ['HDP-HSMM', 'ClaSP', 'AutoPlait', 'StateCorr', 'TICC']
+# method_list = ['HDP-HSMM', 'ClaSP', 'AutoPlait', 'StateCorr', 'TICC']
+method_list = ['StateCorr']
 script_path = os.path.dirname(__file__)
 
 def find_match(score_matrix):
@@ -112,5 +113,5 @@ def evaluate_RQ3():
             print(method_name, i)
             evaluate(method_name, 'dataset'+str(i))
 
-# evaluate('StateCorr', 'dataset1')
+# evaluate('TICC', 'dataset1')
 evaluate_RQ3()
