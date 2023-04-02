@@ -4,10 +4,10 @@ from TSpy.corr import partial_state_corr, lagged_partial_state_corr
 from TSpy.label import reorder_label
 from TSpy.eval import ARI
 
-num_in_group = 3
+num_in_group = 5
 num = 5
 # method_list = ['HDP-HSMM', 'ClaSP', 'AutoPlait', 'StateCorr', 'TICC']
-method_list = ['StateCorr', 'TICC']
+method_list = ['StateCorr', 'TICC', 'ClaSP']
 script_path = os.path.dirname(__file__)
 
 def find_match(score_matrix):
