@@ -49,5 +49,5 @@ for method in method_list:
     plt.ylabel('Precision',fontsize=18)
     plt.xticks([0.2,0.4,0.6,0.8,1.0],fontsize=14)
     plt.yticks([0.2,0.4,0.6,0.8,1.0],fontsize=14)
-    plt.savefig(os.path.join(figure_output_path,'prc_RQ2.png'))
+    plt.savefig(os.path.join(figure_output_path,'prc_RQ2.pdf'))
     plt.close()

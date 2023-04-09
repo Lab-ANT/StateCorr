@@ -29,14 +29,14 @@ def use_StateCorr(use_data):
 
     params_LSE['M'] = 10
     params_LSE['N'] = 4
-    params_LSE['out_channels'] = 4
-    params_LSE['nb_steps'] = 10
+    params_LSE['out_channels'] = 2
+    params_LSE['nb_steps'] = 20
     params_LSE['compared_length'] = win_size
     params_LSE['kernel_size'] = 3
 
     for file_name in tqdm.tqdm(file_list):
         data = np.load(os.path.join(data_path, file_name))
-        data = normalize(data)
+        # data = normalize(data)
         params_LSE['in_channels'] = data.shape[1]
         t2s = Time2State(win_size, step, CausalConv_LSE_Adaper(params_LSE), DPGMM(None)).fit(data, win_size, step)
         np.save(os.path.join(script_path, '../output/output_StateCorr/'+use_data+'/state_seq/'+file_name[:-4]+'.npy'), t2s.state_seq)

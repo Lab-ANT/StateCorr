@@ -5,12 +5,14 @@ from TSpy.label import reorder_label
 from sklearn.metrics import precision_recall_curve
 
 num_in_group = 5
-method_list = ['StateCorr', 'TICC', 'AutoPlait', 'ClaSP', 'HDP-HSMM']
+num = 5
+# method_list = ['StateCorr', 'TICC', 'AutoPlait', 'ClaSP', 'HDP-HSMM']
+method_list = ['StateCorr', 'TICC', 'ClaSP']
 
 for method in method_list:
     prediction_list = []
     gt_list = []
-    for i in range(1,4):
+    for i in range(1,num+1):
         use_data = 'dataset'+str(i)
         script_path = os.path.dirname(__file__)
         data_path = os.path.join(script_path, '../output/output_'+method+'/'+use_data+'/')
@@ -41,8 +43,8 @@ for method in method_list:
     np.save(os.path.join(matrix_save_path, 'prediction_matrix.npy'), groundtruth_matrix)
 
     # calculate correlation matrix and lag matrix
-    groundtruth_matrix = np.zeros((3*num_in_group,3*num_in_group))
-    for i in range(3):
+    groundtruth_matrix = np.zeros((num*num_in_group,num*num_in_group))
+    for i in range(num):
         groundtruth_matrix[i*num_in_group:num_in_group*(i+1),i*num_in_group:num_in_group*(i+1)] = 1
     groundtruth_matrix = groundtruth_matrix==1
     prediction_matrix, lag_matrix = lagged_state_correlation(prediction_list)

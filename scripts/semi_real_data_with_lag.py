@@ -8,8 +8,8 @@ from scipy import io
 # configuration
 channel_num = 4
 # seg_num = 20
-seg_len = [800, 1200] # 200~1000
-state_num = [6, 7] # 4~8
+seg_len = [400, 800] # 200~1000
+state_num = [5, 7] # 4~8
 num_group = 1
 num_ts_in_group = 5
 script_path = os.path.dirname(__file__)

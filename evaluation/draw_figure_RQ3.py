@@ -5,8 +5,8 @@ from sklearn.metrics import precision_recall_curve
 from TSpy.label import reorder_label
 
 num = 5
-# method_list = ['StateCorr', 'TICC', 'AutoPlait', 'ClaSP', 'HDP-HSMM']
-method_list = ['StateCorr', 'TICC', 'ClaSP']
+method_list = ['StateCorr', 'TICC', 'AutoPlait', 'ClaSP', 'HDP-HSMM']
+# method_list = ['StateCorr', 'TICC', 'ClaSP']
 script_path = os.path.dirname(__file__)
 fig_save_path = os.path.join(script_path, '../output/figs/')
 
@@ -28,14 +28,16 @@ def evaluate(method_name, dataset_name):
     for i in range(num):
         prediction = reorder_label(np.load(os.path.join(data_path, 'state_seq/test'+str(i)+'.npy')))
         groundtruth = reorder_label(np.load(true_state_seq_path+'test'+str(i)+'.npy')[:len(prediction)])
-        ax[i].imshow(groundtruth.reshape(-1,1).T, aspect='auto', cmap='tab20c', interpolation='nearest')
-        ax[i+num].imshow(prediction.reshape(-1,1).T, aspect='auto', cmap='tab20c', interpolation='nearest')
-        ax[i].set_xlabel('')
-        ax[i+num].set_xlabel('')
-        ax[i].set_xticks([])
-        ax[i].set_yticks([])
-        ax[i+num].set_xticks([])
-        ax[i+num].set_yticks([])
+        # ax[i].imshow(groundtruth.reshape(-1,1).T, aspect='auto', cmap='tab20c', interpolation='nearest')
+        # ax[i+num].imshow(prediction.reshape(-1,1).T, aspect='auto', cmap='tab20c', interpolation='nearest')
+        ax[i*2].imshow(groundtruth.reshape(-1,1).T, aspect='auto', cmap='tab20c', interpolation='nearest')
+        ax[i*2+1].imshow(prediction.reshape(-1,1).T, aspect='auto', cmap='tab20c', interpolation='nearest')
+        # ax[i].set_xlabel('')
+        # ax[i+num].set_xlabel('')
+        # ax[i].set_xticks([])
+        # ax[i].set_yticks([])
+        # ax[i+num].set_xticks([])
+        # ax[i+num].set_yticks([])
     plt.savefig(os.path.join(figure_output_path,'seg_'+dataset_name+'.png'))
     plt.close()
 
@@ -95,17 +97,46 @@ def evaluate_RQ3():
 
     # draw PRC curve
     # plt.style.use('classic')
-    plt.grid()
+    # plt.figure(figsize=(6,4))
+    # # plt.grid()
+    # for i, method_name in enumerate(method_list):
+    #     print(i)
+    #     plt.plot(precision_list[i], recall_list[i], lw=2, label=method_name)
+    # plt.xlabel('Recall',fontsize=14)
+    # plt.ylabel('Precision',fontsize=14)
+    # plt.xticks([0.2,0.4,0.6,0.8,1.0],fontsize=14)
+    # plt.yticks([0.2,0.4,0.6,0.8,1.0],fontsize=14)
+    # # plt.legend()
+    # plt.legend(bbox_to_anchor=(0.5, 1.15), ncol=5, fontsize=10, loc='upper center')
+    # plt.tight_layout()
+    # plt.savefig(os.path.join(fig_save_path, 'prc_RQ3.png'))
+    # plt.close()
+
+    plt.style.use('classic')
+    fig = plt.figure(figsize=(8,4))
+    ax = fig.subplots(ncols=2)
     for i, method_name in enumerate(method_list):
         print(i)
-        plt.plot(precision_list[i], recall_list[i], lw=2, label=method_name)
-    plt.xlabel('Recall',fontsize=18)
-    plt.ylabel('Precision',fontsize=18)
-    plt.xticks([0.2,0.4,0.6,0.8,1.0],fontsize=14)
-    plt.yticks([0.2,0.4,0.6,0.8,1.0],fontsize=14)
-    # plt.legend()
-    plt.legend(bbox_to_anchor=(0.5, 1.1), ncol=5, fontsize=12, loc='upper center')
-    plt.savefig(os.path.join(fig_save_path, 'prc_RQ3.png'))
+        ax[0].plot(precision_list[i], recall_list[i], lw=2, label=method_name)
+    ax[0].set_xlabel('Recall',fontsize=14)
+    ax[0].set_ylabel('Precision',fontsize=14)
+    ax[0].set_title('Dataset I')
+    ax[0].set_xticks([0.2,0.4,0.6,0.8,1.0],fontsize=14)
+    ax[0].set_yticks([0.2,0.4,0.6,0.8,1.0],fontsize=14)
+    ax[1].set_title('Dataset II')
+    ax[1].set_xlabel('Recall',fontsize=14)
+    ax[1].set_ylabel('Precision',fontsize=14)
+    ax[1].set_xticks([0.2,0.4,0.6,0.8,1.0],fontsize=14)
+    ax[1].set_yticks([0.2,0.4,0.6,0.8,1.0],fontsize=14)
+    # plt.xticks([0.2,0.4,0.6,0.8,1.0],fontsize=14)
+    # plt.yticks([0.2,0.4,0.6,0.8,1.0],fontsize=14)
+    # plt.gcf().subplots_adjust(left=None, bottom=None, right=None, top=2)
+    lines, labels = fig.axes[0].get_legend_handles_labels()
+    fig.legend(lines, labels, framealpha=1, bbox_to_anchor=(0.98, 1), ncol=5, fontsize=12)
+    # fig.legend(lines, labels, loc='upper center', ncol=5, fontsize=12)
+    plt.tight_layout()
+    plt.subplots_adjust(top=0.8)
+    plt.savefig(os.path.join(fig_save_path, 'prc_RQ3.pdf'))
     plt.close()
 
 # evaluate('TICC', 'dataset1')
