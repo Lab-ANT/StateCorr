@@ -48,5 +48,5 @@ def find_top_k(id, k):
     plt.savefig('look.png')
     print(idx[:k])
 
-find_top_k(14, 10)
+find_top_k(14, 5)
 # find_top_k(18, 5)

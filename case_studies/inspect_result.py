@@ -108,6 +108,23 @@ def find_top_k(id, k):
         ax[i].imshow(state_seq, aspect='auto', cmap='tab20c', interpolation='nearest', alpha=0.6, origin='lower', vmax=5, vmin=0)
         ax[i].plot(data_, lw=0.5)
         ax[i].set_ylim([-0.1,1.1])
+
+        if i == 0:
+            ax[i].set_title('Indicator %d'%(i+1), loc='left', y=0.55, x=0.02,
+                fontsize='medium')
+        elif i == 1:
+            ax[i].set_title('%d-st state-correlated Indicator of %d'%(i+1, 1), loc='left', y=0.55, x=0.02,
+                fontsize='medium')
+        # elif i == 0:
+        #     ax[i].set_title('%d-stIndicator %d'%(i+1), loc='left', y=0.55, x=0.02,
+        #         fontsize='medium')
+        # elif i == 0:
+        #     ax[i].set_title('%d-stIndicator %d'%(i+1), loc='left', y=0.55, x=0.02,
+        #         fontsize='medium')
+        # elif i == 0:
+        #     ax[i].set_title('%d-stIndicator %d'%(i+1), loc='left', y=0.55, x=0.02,
+        #         fontsize='medium')
+    
     plt.tight_layout()
     plt.subplots_adjust(hspace=0.2)
     plt.savefig('look.png')

@@ -9,6 +9,9 @@ script_path = os.path.dirname(__file__)
 data_path = os.path.join(script_path, '../data/')
 save_path = os.path.join(script_path, '../data/synthetic_data/')
 
+# def load_as_classification_dataset(fn):
+#     fn()
+
 def load_USC_HAD_as_classification_dataset(subject, target, dataset_path):
     prefix = os.path.join(dataset_path,'USC-HAD/Subject'+str(subject)+'/')
     fname_prefix = 'a'
@@ -48,8 +51,8 @@ def load_ActRecTut_as_classification_dataset(use_state=None):
         data_list.append(data[idx].squeeze(1))
     return data_list
 
-# data = load_ActRecTut_as_classification_dataset(None)
-data = load_USC_HAD_as_classification_dataset(1, 1, data_path)
+data = load_ActRecTut_as_classification_dataset(None)
+# data = load_USC_HAD_as_classification_dataset(1, 1, data_path)
 
 num_states = len(data)
 fig, ax = plt.subplots(nrows=num_states)
@@ -57,17 +60,3 @@ for i in range(num_states):
     ax[i].plot(data[i])
     print(data[i].shape)
 plt.savefig('class.png')
-# print(data[0].shape)
-
-# from TSpy.view import plot_mts
-# data, groundtruth = load_ActRecTut()
-# plot_mts(data, groundtruth)
-# plt.savefig('class2.png')
-
-# data, groundtruth = load_ActRecTut_as_classification_dataset()
-# data = load_USC_HAD_as_classification_dataset(1,1,data_path)
-
-# import matplotlib.pyplot as plt
-# from TSpy.view import plot_mts
-# plot_mts(data,groundtruth=groundtruth)
-# plt.savefig('class.png')
