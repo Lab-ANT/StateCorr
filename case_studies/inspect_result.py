@@ -94,7 +94,8 @@ def find_top_k(id, k):
     idx = np.argsort(-col)
     print(idx)
 
-    fig, ax = plt.subplots(nrows=k, sharex=True, figsize=(4,4.5))
+    # fig, ax = plt.subplots(nrows=k, sharex=True, figsize=(4,4.5))
+    fig, ax = plt.subplots(nrows=k, sharex=True, figsize=(8,4.5))
     state_seq1 = adjust_label(state_seq_array[idx[0]]).flatten()
     for i in range(k):
         data_ = data[:,idx[i]]
@@ -113,17 +114,17 @@ def find_top_k(id, k):
             ax[i].set_title('Indicator %d'%(i+1), loc='left', y=0.55, x=0.02,
                 fontsize='medium')
         elif i == 1:
-            ax[i].set_title('%d-st state-correlated Indicator of %d'%(i+1, 1), loc='left', y=0.55, x=0.02,
+            ax[i].set_title('%d-st state-correlated indicator'%(i), loc='left', y=0.55, x=0.02,
                 fontsize='medium')
-        # elif i == 0:
-        #     ax[i].set_title('%d-stIndicator %d'%(i+1), loc='left', y=0.55, x=0.02,
-        #         fontsize='medium')
-        # elif i == 0:
-        #     ax[i].set_title('%d-stIndicator %d'%(i+1), loc='left', y=0.55, x=0.02,
-        #         fontsize='medium')
-        # elif i == 0:
-        #     ax[i].set_title('%d-stIndicator %d'%(i+1), loc='left', y=0.55, x=0.02,
-        #         fontsize='medium')
+        elif i == 2:
+            ax[i].set_title('%d-nd state-correlated indicator'%(i), loc='left', y=0.55, x=0.02,
+                fontsize='medium')
+        elif i == 3:
+            ax[i].set_title('%d-rd state-correlated indicator'%(i), loc='left', y=0.55, x=0.02,
+                fontsize='medium')
+        else:
+            ax[i].set_title('%d-th state-correlated indicator'%(i), loc='left', y=0.55, x=0.02,
+                fontsize='medium')
     
     plt.tight_layout()
     plt.subplots_adjust(hspace=0.2)
