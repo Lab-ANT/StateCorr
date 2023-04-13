@@ -3,7 +3,8 @@ import os
 import matplotlib.pyplot as plt
 
 num = 5
-method_list = ['StateCorr', 'TICC', 'AutoPlait', 'ClaSP', 'HDP-HSMM']
+# method_list = ['StateCorr', 'TICC', 'AutoPlait', 'ClaSP', 'HDP-HSMM']
+method_list = ['StateCorr']
 script_path = os.path.dirname(__file__)
 fig_save_path = os.path.join(script_path, '../output/figs/')
 
@@ -42,6 +43,6 @@ def plot():
     fig.legend(lines, labels, framealpha=1, bbox_to_anchor=(0.98, 1), ncol=5, fontsize=12)
     plt.tight_layout()
     plt.subplots_adjust(top=0.8)
-    plt.savefig(os.path.join(fig_save_path, 'prc_RQ3.pdf'))
+    plt.savefig(os.path.join(fig_save_path, 'prc_RQ3.png'))
     plt.close()
 plot()
