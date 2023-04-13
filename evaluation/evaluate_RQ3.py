@@ -7,7 +7,7 @@ from TSpy.eval import ARI
 num_in_group = 5
 num = 5
 # method_list = ['HDP-HSMM', 'ClaSP', 'AutoPlait', 'StateCorr', 'TICC']
-method_list = ['StateCorr']
+method_list = ['StateCorr','ClaSP']
 script_path = os.path.dirname(__file__)
 
 def find_match(score_matrix):
