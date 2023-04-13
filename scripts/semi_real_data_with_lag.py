@@ -15,7 +15,7 @@ num_ts_in_group = 5
 script_path = os.path.dirname(__file__)
 data_path = os.path.join(script_path, '../data/')
 save_path = os.path.join(script_path, '../data/synthetic_data/')
-dataset_name = 'dataset1'
+dataset_name = 'dataset5'
 random_state = None
 length = 20000
 
@@ -94,9 +94,10 @@ def load_ActRecTut_as_classification_dataset(use_state=None):
         data_list.append(data[idx].squeeze(1))
     return data_list[2:]
 
+class_list = load_USC_HAD_as_classification_dataset(1,1,data_path)
+class_list += load_ActRecTut_as_classification_dataset(None)
+
 def gen_channel_from_json(seg_json):
-    class_list = load_USC_HAD_as_classification_dataset(1,1,data_path)
-    # class_list = load_ActRecTut_as_classification_dataset(None)
     state_list = [seg_json[seg] for seg in seg_json]
     seg_len_list = np.array([seg for seg in seg_json])
     first_seg_len = seg_len_list[0]
