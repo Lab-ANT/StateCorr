@@ -31,6 +31,7 @@ supplements
 HVGH
 REDSDS
 ts2vec
-Baselines/evaluation_hsmm.py
+!Baselines/evaluation_hsmm.py
 !Baselines/hdphsmm.py
 !Baselines/hdp-hsmm.py
+!Baselines/pyhsmm2
