@@ -29,9 +29,8 @@ output
 output2
 supplements
 HVGH
-pyhsmm2
 REDSDS
 ts2vec
 Baselines/evaluation_hsmm.py
-Baselines/hdphsmm.py
-Baselines/hdp-hsmm.py
+!Baselines/hdphsmm.py
+!Baselines/hdp-hsmm.py
