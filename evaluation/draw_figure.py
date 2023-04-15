@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 
 num = 5
 # method_list = ['StateCorr', 'TICC', 'AutoPlait', 'ClaSP', 'HDP-HSMM']
-method_list = ['StateCorr','ClaSP']
+method_list = ['StateCorr','ClaSP','TICC', 'AutoPlait']
 script_path = os.path.dirname(__file__)
 fig_save_path = os.path.join(script_path, '../output/figs/')
 

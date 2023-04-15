@@ -33,7 +33,7 @@ output_path = os.path.join(script_path, '../../../output/output_AutoPlait')
 for i in range(1,6):
     result_save_path = os.path.join(output_path, 'dataset%d/state_seq'%(i))
     create_path(result_save_path)
-    for j in range(20):
+    for j in range(5):
         prediction = read_result_dir2(
             os.path.join(result_path, 'synthetic_data/dataset%d/dat%d/'%(i,j+1)), 20000)#[:-1]
         # print(i,j,prediction.shape)

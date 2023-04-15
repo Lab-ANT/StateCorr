@@ -13,13 +13,13 @@ if not os.path.exists(data_save_path):
 for i in tqdm.tqdm(range(1,6)):
     if not os.path.exists(os.path.join(data_save_path, 'dataset%d'%(i))):
         os.makedirs(os.path.join(data_save_path, 'dataset%d'%(i)))
-    for j in range(20):
+    for j in range(5):
         data = np.load(os.path.join(data_original_path, 'dataset%d/test%d.npy'%(i,j)))
         df = pd.DataFrame(data)
         df.to_csv(os.path.join(data_save_path, 'dataset%d/test%d.csv'%(i,j)), header=None, index=None, sep=' ')
 
 for i in range(1,6):
     with open(os.path.join(data_save_path, 'dataset%d/list'%(i)), 'a') as f:
-        for j in range(20):
+        for j in range(5):
             f.write('../../data/synthetic_data_AutoPlait/dataset%d/test%d.csv\n'%(i,j))
         f.close()

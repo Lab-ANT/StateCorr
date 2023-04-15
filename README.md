@@ -20,6 +20,15 @@ cd Time2State
 pip install requirements.txt
 ```
 
+# Baselines
+All baseline installation instructions can be found in the corresponding projects, except for hdp-hsmm
+``` bash
+git clone git@github.com:mattjj/pyhsmm
+mv pyhsmm pyhsmm2
+cd pyhsmm2
+python setup install
+pip install pyhsmm
+```
 # Data Preparation
 
 Download [PAMAP2](http://www.pamap.org/demo.html) and [USC-HAD](http://sipi.usc.edu/had/) and put them in the following position. 

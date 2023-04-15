@@ -13,7 +13,7 @@ OUTDIR="output/synthetic_data/"
 
 d=4
 num_group=5
-num_ts_in_group=20
+num_ts_in_group=5
 
 for (( i=1; i<=$num_group; i++ ))
 do
