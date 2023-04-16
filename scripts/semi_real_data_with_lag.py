@@ -15,7 +15,7 @@ num_ts_in_group = 5
 script_path = os.path.dirname(__file__)
 data_path = os.path.join(script_path, '../data/')
 save_path = os.path.join(script_path, '../data/synthetic_data/')
-dataset_name = 'dataset5'
+dataset_name = 'dataset1'
 random_state = None
 length = 20000
 
