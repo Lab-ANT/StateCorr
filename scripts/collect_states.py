@@ -9,9 +9,6 @@ script_path = os.path.dirname(__file__)
 data_path = os.path.join(script_path, '../data/')
 save_path = os.path.join(script_path, '../data/synthetic_data/')
 
-# def load_as_classification_dataset(fn):
-#     fn()
-
 def load_USC_HAD_as_classification_dataset(subject, target, dataset_path):
     prefix = os.path.join(dataset_path,'USC-HAD/Subject'+str(subject)+'/')
     fname_prefix = 'a'
@@ -51,12 +48,14 @@ def load_ActRecTut_as_classification_dataset(use_state=None):
         data_list.append(data[idx].squeeze(1))
     return data_list
 
-data = load_ActRecTut_as_classification_dataset(None)
-# data = load_USC_HAD_as_classification_dataset(1, 1, data_path)
+class_list = []
+class_list += load_ActRecTut_as_classification_dataset(None)
+class_list += load_USC_HAD_as_classification_dataset(1, 1, data_path)
+print(len(class_list))
 
-num_states = len(data)
-fig, ax = plt.subplots(nrows=num_states)
-for i in range(num_states):
-    ax[i].plot(data[i])
-    print(data[i].shape)
-plt.savefig('class.png')
+# num_states = len(data)
+# fig, ax = plt.subplots(nrows=num_states)
+# for i in range(num_states):
+#     ax[i].plot(data[i])
+#     print(data[i].shape)
+# plt.savefig('class.png')
