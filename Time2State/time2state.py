@@ -47,7 +47,8 @@ class Time2State:
         self.__cluster()
         self.__assign_label()
         self.__smooth()
-        # self.__calculate_velocity()
+        self.__calculate_velocity()
+        self.use_cps()
         return self
 
     def __encode(self, X, win_size, step):
@@ -68,71 +69,103 @@ class Time2State:
             i+=self.__step
         self.__state_seq = np.array([np.argmax(row) for row in vote_matrix])
 
-    # def calculate_velocity(self):
-    #     self.__velocity_list = calculate_scalar_velocity_list(self.__embeddings, interval=1)
+    def __calculate_velocity(self):
+        self.__velocity = calculate_scalar_velocity_list(self.__embeddings, interval=1)
 
-    def find_change_points_by_velocity(self):
-        self.__velocity = calculate_scalar_velocity_list(self.__embeddings, interval=10)
-        self.__acceleration = calculate_scalar_velocity_list(self.__velocity, interval=1)
-        for i in range(10):
-            self.__acceleration = calculate_scalar_velocity_list(self.__acceleration, interval=1)
+    # def find_change_points_by_velocity(self):
+    #     self.__velocity = calculate_scalar_velocity_list(self.__embeddings, interval=1)
+    #     self.__acceleration = calculate_scalar_velocity_list(self.__velocity, interval=1)
+    #     for i in range(10):
+    #         self.__acceleration = calculate_scalar_velocity_list(self.__acceleration, interval=1)
 
-    def __calculate_change_points(self):
-        change_points = []
-        change_points.append(0)
+    # def __calculate_change_points(self):
+    #     change_points = []
+    #     change_points.append(0)
 
-        pre = self.__state_seq[0]
-        for idx, e in enumerate(self.__state_seq):
-            if e != pre:
-                change_points.append(idx-1)
-                pre = e
-        length = len(self.__state_seq)
-        change_points.append(length-1)
-        return change_points
+    #     pre = self.__state_seq[0]
+    #     for idx, e in enumerate(self.__state_seq):
+    #         if e != pre:
+    #             change_points.append(idx-1)
+    #             pre = e
+    #     length = len(self.__state_seq)
+    #     change_points.append(length-1)
+    #     return change_points
 
-    def __judge_trival_segs(self, cps):
-        length = len(self.__state_seq)
-        start = cps[0]
-        for end in cps[1:]:
-            if end-start < .01*length:
-                return True
-            start = end
-        return False
+    # def __judge_trival_segs(self, cps):
+    #     length = len(self.__state_seq)
+    #     start = cps[0]
+    #     for end in cps[1:]:
+    #         if end-start < .01*length:
+    #             return True
+    #         start = end
+    #     return False
         
-    def __merge_trival_segs(self, change_points):
-        length = len(self.__state_seq)
-        start = change_points[0]
-        for end in change_points[1:]:
-            if (end-start) < .01*length:
-                mid = int((end+start)/2)
-                self.__state_seq[start:mid] = self.__state_seq[start-2]
-                self.__state_seq[mid-1:end] = self.__state_seq[end] 
-            start = end
+    # def __merge_trival_segs(self, change_points):
+    #     length = len(self.__state_seq)
+    #     start = change_points[0]
+    #     for end in change_points[1:]:
+    #         if (end-start) < .01*length:
+    #             mid = int((end+start)/2)
+    #             self.__state_seq[start:mid] = self.__state_seq[start-2]
+    #             self.__state_seq[mid-1:end] = self.__state_seq[end] 
+    #         start = end
 
-    def __majority_voting_smooth(self):
-        pass
+    # def __majority_voting_smooth(self):
+    #     pass
 
-    def __simple_smooth(self):
-        change_points = []
-        change_points.append(0)
+    # def __simple_smooth(self):
+    #     change_points = []
+    #     change_points.append(0)
 
-        pre = self.__state_seq[0]
-        for idx, e in enumerate(self.__state_seq):
-            if e != pre:
-                change_points.append(idx-1)
+    #     pre = self.__state_seq[0]
+    #     for idx, e in enumerate(self.__state_seq):
+    #         if e != pre:
+    #             change_points.append(idx-1)
+    #             pre = e
+    #     length = len(self.__state_seq)
+    #     change_points.append(length-1)
+
+    #     length = len(self.__state_seq)
+    #     start = change_points[0]
+    #     for end in change_points[1:]:
+    #         if (end-start) < .02*length:
+    #             mid = int((end+start)/2)
+    #             self.__state_seq[start:mid] = self.__state_seq[start-2]
+    #             self.__state_seq[mid-1:end] = self.__state_seq[end] 
+    #         start = end
+
+    def use_cps(self):
+        cut_list = self.find_potentional_cp()
+        self.__embedding_label = self.bucket(self.__embedding_label, cut_list)
+    
+    def find_potentional_cp(self):
+        threshold = np.mean(self.__velocity)
+        idx = self.__velocity>=threshold
+        pre = idx[0]
+        cut_list = []
+        for i, e in enumerate(idx):
+            if e == pre:
+                continue
+            else:
+                cut_list.append(i)
                 pre = e
-        length = len(self.__state_seq)
-        change_points.append(length-1)
+        return cut_list
 
-        length = len(self.__state_seq)
-        start = change_points[0]
-        for end in change_points[1:]:
-            if (end-start) < .02*length:
-                mid = int((end+start)/2)
-                self.__state_seq[start:mid] = self.__state_seq[start-2]
-                self.__state_seq[mid-1:end] = self.__state_seq[end] 
-            start = end
-        
+    def bucket(self, X, cut_points):
+        result = np.array(X.shape, dtype=int)
+        pre = cut_points[0]
+        for cut in cut_points[1:]:
+            sub_seq = X[pre:cut]
+            label_set = list(set(sub_seq))
+            vote_list = []
+            for label in label_set:
+                vote_list.append(len(np.argwhere(sub_seq==label)))
+            max_idx = np.argmax(vote_list)
+            print(max_idx, len(vote_list), label_set)
+            result[pre:cut]=label_set[max_idx]
+            pre = cut
+        return result
+
     def __smooth(self):
         return
         # self.__simple_smooth()
