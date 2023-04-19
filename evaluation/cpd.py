@@ -47,9 +47,9 @@ ax[1].hlines(np.mean(t2s.velocity), 0, len(t2s.velocity), color="red")
 ax[2].imshow(groundtruth.reshape(-1,1).T, aspect='auto', cmap='tab20c', interpolation='nearest', alpha=0.5, origin='lower')
 ax[3].imshow(t2s.state_seq.reshape(-1,1).T, aspect='auto', cmap='tab20c', interpolation='nearest', alpha=0.5, origin='lower')
 
-# max_v = np.max(velocity)
-# min_v = np.min(velocity)
-# for cut in cut_list:
-#     ax[1].vlines(cut, min_v, max_v,color="red")
+max_v = np.max(t2s.velocity)
+min_v = np.min(t2s.velocity)
+for cut in t2s.change_points:
+    ax[1].vlines(cut, min_v, max_v,color="red")
 
 plt.savefig('velocity.png')

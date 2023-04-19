@@ -149,6 +149,7 @@ class Time2State:
             else:
                 cut_list.append(i)
                 pre = e
+        self.__change_points = cut_list
         return cut_list
 
     def bucket(self, X, cut_points):
@@ -219,5 +220,5 @@ class Time2State:
         return self.__velocity
 
     @property
-    def acceleration(self):
-        return self.__acceleration
+    def change_points(self):
+        return self.__change_points
