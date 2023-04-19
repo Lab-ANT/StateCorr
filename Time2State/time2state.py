@@ -68,8 +68,14 @@ class Time2State:
             i+=self.__step
         self.__state_seq = np.array([np.argmax(row) for row in vote_matrix])
 
-    def calculate_velocity(self):
-        self.__velocity_list = calculate_scalar_velocity_list(self.__embeddings, interval=1)
+    # def calculate_velocity(self):
+    #     self.__velocity_list = calculate_scalar_velocity_list(self.__embeddings, interval=1)
+
+    def find_change_points_by_velocity(self):
+        self.__velocity = calculate_scalar_velocity_list(self.__embeddings, interval=1)
+        self.__acceleration = calculate_scalar_velocity_list(self.__velocity, interval=1)
+        for i in range(10):
+            self.__acceleration = calculate_scalar_velocity_list(self.__acceleration, interval=1)
 
     def __calculate_change_points(self):
         change_points = []
@@ -176,5 +182,9 @@ class Time2State:
         return self.__embedding_label
 
     @property
-    def velocity_list(self):
-        return self.__velocity_list
+    def velocity(self):
+        return self.__velocity
+
+    @property
+    def acceleration(self):
+        return self.__acceleration

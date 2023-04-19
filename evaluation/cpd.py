@@ -38,12 +38,16 @@ params_LSE['kernel_size'] = 3
 data, groundtruth = load_ActRecTut('subject1_walk')
 params_LSE['in_channels'] = data.shape[1]
 t2s = Time2State(win_size, step, CausalConv_LSE_Adaper(params_LSE), DPGMM(None)).fit(data, win_size, step)
-t2s.calculate_velocity()
-velocity = t2s.velocity_list
+t2s.find_change_points_by_velocity()
+velocity = t2s.velocity
+acceleration = t2s.acceleration
 
-fig, ax = plt.subplots(nrows=2)
+fig, ax = plt.subplots(nrows=3)
 ax[0].plot(data)
 ax[1].plot(velocity)
+ax[1].hlines(np.mean(velocity), 0, len(velocity), color="red")
+ax[2].plot(acceleration)
+ax[2].hlines(np.mean(acceleration), 0, len(velocity), color="red")
 plt.savefig('velocity.png')
     # data = np.load(os.path.join(data_path, file_name))
     # # data = normalize(data)
