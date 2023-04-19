@@ -1,7 +1,5 @@
 import sys
 import os
-import numpy as np
-import tqdm
 sys.path.append('./')
 from Time2State.time2state import Time2State
 from Time2State.adapers import *
@@ -10,6 +8,7 @@ from Time2State.default_params import *
 from TSpy.utils import *
 from TSpy.label import seg_to_label, reorder_label, compact
 from scipy import io
+import matplotlib.pyplot as plt
 
 script_path = os.path.dirname(__file__)
 data_path = os.path.join(script_path, '../data/')
@@ -42,6 +41,10 @@ t2s = Time2State(win_size, step, CausalConv_LSE_Adaper(params_LSE), DPGMM(None))
 t2s.calculate_velocity()
 velocity = t2s.velocity_list
 
+fig, ax = plt.subplots(nrows=2)
+ax[0].plot(data)
+ax[1].plot(velocity)
+plt.savefig('velocity.png')
     # data = np.load(os.path.join(data_path, file_name))
     # # data = normalize(data)
     # np.save(os.path.join(script_path, '../output/output_StateCorr/'+use_data+'/state_seq/'+file_name[:-4]+'.npy'), t2s.state_seq)
