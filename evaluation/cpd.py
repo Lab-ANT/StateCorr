@@ -42,12 +42,36 @@ t2s.find_change_points_by_velocity()
 velocity = t2s.velocity
 acceleration = t2s.acceleration
 
-fig, ax = plt.subplots(nrows=3)
+def find_seg_in_idx(idx, length):
+
+    return
+
+def find_potentional_cp(velocity, threshold):
+    idx = velocity>=threshold
+    pre = idx[0]
+    cut_list = []
+    for i, e in enumerate(idx):
+        if e == pre:
+            continue
+        else:
+            cut_list.append(i)
+            pre = e
+    print(idx)
+    print(cut_list)
+    return cut_list
+
+fig, ax = plt.subplots(nrows=2)
 ax[0].plot(data)
 ax[1].plot(velocity)
 ax[1].hlines(np.mean(velocity), 0, len(velocity), color="red")
-ax[2].plot(acceleration)
-ax[2].hlines(np.mean(acceleration), 0, len(velocity), color="red")
+cut_list = find_potentional_cp(velocity, np.mean(velocity))
+max_v = np.max(velocity)
+min_v = np.min(velocity)
+for cut in cut_list:
+    ax[1].vlines(cut, min_v, max_v,color="red")
+
+# ax[2].plot(acceleration)
+# ax[2].hlines(np.mean(acceleration), 0, len(velocity), color="red")
 plt.savefig('velocity.png')
     # data = np.load(os.path.join(data_path, file_name))
     # # data = normalize(data)

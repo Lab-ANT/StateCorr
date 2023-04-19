@@ -72,7 +72,7 @@ class Time2State:
     #     self.__velocity_list = calculate_scalar_velocity_list(self.__embeddings, interval=1)
 
     def find_change_points_by_velocity(self):
-        self.__velocity = calculate_scalar_velocity_list(self.__embeddings, interval=1)
+        self.__velocity = calculate_scalar_velocity_list(self.__embeddings, interval=10)
         self.__acceleration = calculate_scalar_velocity_list(self.__velocity, interval=1)
         for i in range(10):
             self.__acceleration = calculate_scalar_velocity_list(self.__acceleration, interval=1)
