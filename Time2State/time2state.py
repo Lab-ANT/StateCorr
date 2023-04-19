@@ -68,7 +68,7 @@ class Time2State:
             i+=self.__step
         self.__state_seq = np.array([np.argmax(row) for row in vote_matrix])
 
-    def __calculate_velocity(self):
+    def calculate_velocity(self):
         self.__velocity_list = calculate_scalar_velocity_list(self.__embeddings, interval=1)
 
     def __calculate_change_points(self):
