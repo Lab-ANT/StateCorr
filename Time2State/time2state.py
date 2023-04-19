@@ -162,7 +162,7 @@ class Time2State:
             for label in label_set:
                 vote_list.append(len(np.argwhere(sub_seq==label)))
             max_idx = np.argmax(vote_list)
-            print(max_idx, len(vote_list), label_set)
+            # print(max_idx, len(vote_list), label_set)
             result[pre:cut]=label_set[max_idx]
             pre = cut
         return result

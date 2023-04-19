@@ -19,3 +19,4 @@ mv data/OmniAnomaly/ServerMachineDataset data/SMD && rm -rf data/OmniAnomaly
 wget -c --timestamping  http://www.cs.ucr.edu/~eamonn/FLOSS/datasets_seg.zip -O data/UCR-SEG.zip
 unzip -o data/UCR-SEG.zip -d data/
 mv data/datasets_seg data/UCR-SEG
+rm -f "data/UCR-SEG/UCR_semantic segmentation_2017.ppt"
