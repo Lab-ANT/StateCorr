@@ -128,7 +128,7 @@ def find_top_k(id, k):
     
     plt.tight_layout()
     plt.subplots_adjust(hspace=0.2)
-    plt.savefig('look.pdf')
+    plt.savefig('look.png')
     print(idx[:k])
 
 find_top_k(14, 6)

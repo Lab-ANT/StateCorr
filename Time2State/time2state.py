@@ -43,7 +43,7 @@ class Time2State:
         self.__encode(X, win_size, step)
         self.__cluster()
         self.__assign_label()
-        self.__smooth()
+        # self.__smooth()
         self.__calculate_velocity()
         self.use_cps()
         return self

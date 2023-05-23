@@ -1,6 +1,9 @@
+# Here is the case study code
+
 # Usage
 
-1. seg_SMD.py calculate the state sequences of data.
+1. seg_SMD.py calculates the state sequences of data in SMD.  
+Here are 
 
 2. pearson_and_spearman.py calculate the pearson and spearman correlation matrix of data.
 

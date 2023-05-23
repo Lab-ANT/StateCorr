@@ -10,13 +10,12 @@ from Time2State.adapers import *
 from Time2State.clustering import *
 from Time2State.default_params import *
 
-
 script_path = os.path.dirname(__file__)
 data_path = os.path.join(script_path, '../data/SMD/')
 train_path = os.path.join(data_path, 'train')
-test_path = os.path.join(data_path, 'test')
 file_list = os.listdir(os.path.join(data_path, 'train'))
 
+# 1024 is about one-day-long
 win_size = 1024
 step = 200
 
@@ -25,12 +24,8 @@ step = 200
 # 1024, 200
 
 params_LSE['in_channels'] = 1
-params_LSE['M'] = 10
-params_LSE['N'] = 4
 params_LSE['out_channels'] = 1
-params_LSE['nb_steps'] = 20
 params_LSE['compared_length'] = win_size
-params_LSE['kernel_size'] = 3
 
 if not os.path.exists('case_study1/state_seq/'):
     os.makedirs('case_study1/state_seq/')
