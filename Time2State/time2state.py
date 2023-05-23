@@ -24,12 +24,10 @@ class Time2State:
     def fit_encoder(self, X):
         self.__encoder.fit(X)
         return self
-        # self.loss_list = self.__encoder.loss_list
 
     def predict_without_encode(self, X, win_size, step):
         self.__cluster()
         self.__assign_label()
-        self.__smooth()
         return self
 
     def predict(self, X, win_size, step):
@@ -37,7 +35,6 @@ class Time2State:
         self.__encode(X, win_size, step)
         self.__cluster()
         self.__assign_label()
-        self.__smooth()
         return self
 
     def fit(self, X, win_size, step):
@@ -72,25 +69,6 @@ class Time2State:
     def __calculate_velocity(self):
         self.__velocity = calculate_scalar_velocity_list(self.__embeddings, interval=1)
 
-    # def find_change_points_by_velocity(self):
-    #     self.__velocity = calculate_scalar_velocity_list(self.__embeddings, interval=1)
-    #     self.__acceleration = calculate_scalar_velocity_list(self.__velocity, interval=1)
-    #     for i in range(10):
-    #         self.__acceleration = calculate_scalar_velocity_list(self.__acceleration, interval=1)
-
-    # def __calculate_change_points(self):
-    #     change_points = []
-    #     change_points.append(0)
-
-    #     pre = self.__state_seq[0]
-    #     for idx, e in enumerate(self.__state_seq):
-    #         if e != pre:
-    #             change_points.append(idx-1)
-    #             pre = e
-    #     length = len(self.__state_seq)
-    #     change_points.append(length-1)
-    #     return change_points
-
     # def __judge_trival_segs(self, cps):
     #     length = len(self.__state_seq)
     #     start = cps[0]
@@ -110,35 +88,11 @@ class Time2State:
     #             self.__state_seq[mid-1:end] = self.__state_seq[end] 
     #         start = end
 
-    # def __majority_voting_smooth(self):
-    #     pass
-
-    # def __simple_smooth(self):
-    #     change_points = []
-    #     change_points.append(0)
-
-    #     pre = self.__state_seq[0]
-    #     for idx, e in enumerate(self.__state_seq):
-    #         if e != pre:
-    #             change_points.append(idx-1)
-    #             pre = e
-    #     length = len(self.__state_seq)
-    #     change_points.append(length-1)
-
-    #     length = len(self.__state_seq)
-    #     start = change_points[0]
-    #     for end in change_points[1:]:
-    #         if (end-start) < .02*length:
-    #             mid = int((end+start)/2)
-    #             self.__state_seq[start:mid] = self.__state_seq[start-2]
-    #             self.__state_seq[mid-1:end] = self.__state_seq[end] 
-    #         start = end
-
     def use_cps(self):
-        cut_list = self.find_potentional_cp()
+        cut_list = self.__find_potentional_cp()
         self.__embedding_label = self.bucket(self.__embedding_label, cut_list)
     
-    def find_potentional_cp(self):
+    def __find_potentional_cp(self):
         threshold = np.mean(self.__velocity)
         idx = self.__velocity>=threshold
         pre = idx[0]
@@ -166,15 +120,6 @@ class Time2State:
             result[pre:cut]=label_set[max_idx]
             pre = cut
         return result
-
-    def __smooth(self):
-        return
-        # self.__simple_smooth()
-        # change_points = self.__calculate_change_points()
-        # while self.__judge_trival_segs(change_points):
-        #     self.__merge_trival_segs(change_points)
-        #     change_points = self.__calculate_change_points()
-        #     print(change_points)
 
     # def __assign_label(self):
     #     hight = len(set(self.__embedding_label))
