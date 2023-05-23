@@ -63,6 +63,7 @@ def cluster_segs(X, found_cps, n_states):
     seg_list.append(X[start:length])
     segments = padding_and_stack(seg_list)
     # dtw, euclidean, softdtw
+    print(segments.shape)
     ts_kmeans = TimeSeriesKMeans(n_clusters=n_states,metric='euclidean').fit(segments)
     labels = ts_kmeans.labels_
     seg_label_list = []
@@ -75,6 +76,7 @@ def cluster_segs(X, found_cps, n_states):
 
 def run_clasp(X, window_size, num_cps, n_states, offset):
     profile_, found_cps, _ = extract_clasp_cps_from_multivariate_ts(X, window_size, num_cps, offset)
+    print(found_cps)
     found_cps.sort()
     prediction = cluster_segs(X, found_cps, n_states)
     return prediction
@@ -90,11 +92,12 @@ def use_ClaSP(use_data):
 
     for file_name in tqdm.tqdm(file_list):
         data = np.load(os.path.join(data_path, file_name))
+        print(data.shape)
         state_seq = np.load(os.path.join(true_state_seq_path, file_name))
         n_states = len(set(state_seq))
-        prediction = run_clasp(data, 50, 40, n_states, 0.02)
+        prediction = run_clasp(data[::5], 50, 40, n_states, 0.02)
         prediction = prediction.astype(int)
-        np.save(output_path+file_name[:-4]+'.npy', prediction)
+        # np.save(output_path+file_name[:-4]+'.npy', prediction)
 
 for i in range(1,6):
     use_ClaSP('dataset'+str(i))
