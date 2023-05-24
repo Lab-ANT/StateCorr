@@ -16,15 +16,12 @@ train_path = os.path.join(data_path, 'train')
 file_list = os.listdir(os.path.join(data_path, 'train'))
 
 # 1024 is about one-day-long
-win_size = 1024
+win_size =1024
 step = 200
-
-# 256, 50
-# 512, 100
-# 1024, 200
 
 params_LSE['in_channels'] = 1
 params_LSE['out_channels'] = 1
+params_LSE['nb_steps'] = 20
 params_LSE['compared_length'] = win_size
 
 if not os.path.exists('case_study1/state_seq/'):

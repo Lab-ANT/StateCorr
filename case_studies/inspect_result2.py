@@ -11,8 +11,8 @@ data_path = os.path.join(script_path, '../data/SMD/')
 use_data = 'machine-1-6'
 
 # matrix_path = os.path.join(script_path, '../case_study1/pearson/'+use_data+'.npy')
-matrix_path = os.path.join(script_path, '../case_study1/state128/'+use_data+'.npy')
-state_seq_path = os.path.join(script_path, '../case_study1/state_seq-128/'+use_data+'.npy')
+matrix_path = os.path.join(script_path, '../case_study1/state/'+use_data+'.npy')
+state_seq_path = os.path.join(script_path, '../case_study1/state_seq/'+use_data+'.npy')
 
 def exclude_outlier(X):
     mean = np.mean(X)

@@ -32,11 +32,9 @@ class Time2State:
 
     def predict(self, X, win_size, step):
         self.__length = X.shape[0]
-        self.__step = step
         self.__encode(X, win_size, step)
         self.__cluster()
         self.__assign_label()
-        self.__use_cps()
         return self
 
     def fit(self, X, win_size, step):
@@ -46,6 +44,7 @@ class Time2State:
         self.__cluster()
         self.__assign_label()
         self.__calculate_velocity()
+        # self.__use_cps()
         return self
 
     def __encode(self, X, win_size, step):
@@ -69,13 +68,28 @@ class Time2State:
     def __calculate_velocity(self):
         self.__velocity = calculate_scalar_velocity_list(self.__embeddings, interval=1)
 
-    def map_cut_list(self, X):
-        return np.array(X, dtype=int)*self.__step
+    # def __judge_trival_segs(self, cps):
+    #     length = len(self.__state_seq)
+    #     start = cps[0]
+    #     for end in cps[1:]:
+    #         if end-start < .01*length:
+    #             return True
+    #         start = end
+    #     return False
+        
+    # def __merge_trival_segs(self, change_points):
+    #     length = len(self.__state_seq)
+    #     start = change_points[0]
+    #     for end in change_points[1:]:
+    #         if (end-start) < .01*length:
+    #             mid = int((end+start)/2)
+    #             self.__state_seq[start:mid] = self.__state_seq[start-2]
+    #             self.__state_seq[mid-1:end] = self.__state_seq[end] 
+    #         start = end
 
     def __use_cps(self):
         cut_list = self.__find_potentional_cp()
-        cut_list = self.map_cut_list(cut_list)
-        self.__state_seq = self.bucket(self.__state_seq, cut_list)
+        self.__embedding_label = self.bucket(self.__embedding_label, cut_list)
     
     def __find_potentional_cp(self):
         threshold = np.mean(self.__velocity)

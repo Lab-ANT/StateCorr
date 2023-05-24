@@ -13,13 +13,8 @@ use_data = 'machine-1-6'
 matrix_path = os.path.join(script_path, '../case_study1/state/'+use_data+'.npy')
 state_seq_path = os.path.join(script_path, '../case_study1/state_seq/'+use_data+'.npy')
 
-# import matplotlib as mpl
-# cmap = mpl.colors.ListedColormap(['blue', 'green', 'black', 'cyan', 'red'])
-
 def decompose_state_seq(X):
     state_set = set(list(X))
-    # return state_set
-    # print(state_set)
     single_state_seq_list = []
     for state in list(state_set):
         single_state_seq = np.zeros(X.shape, dtype=int)
