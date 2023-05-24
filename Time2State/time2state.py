@@ -74,7 +74,7 @@ class Time2State:
 
     def __use_cps(self):
         cut_list = self.__find_potentional_cp()
-        cut_list = self.map_cut_list(cut_list)
+        cut_list = self.map_cut_list(cut_list)+self.__offset
         self.__state_seq = self.bucket(self.__state_seq, cut_list)
     
     def __find_potentional_cp(self):
