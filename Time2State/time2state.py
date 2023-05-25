@@ -36,7 +36,7 @@ class Time2State:
         self.__encode(X, win_size, step)
         self.__cluster()
         self.__assign_label()
-        self.__use_cps()
+        # self.__use_cps()
         return self
 
     def fit(self, X, win_size, step):

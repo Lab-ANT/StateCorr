@@ -83,7 +83,7 @@ def exclude_outlier(X):
 
 def find_top_k(id, k):
     data,_,_,_,_,_ = load_SMD(data_path, use_data)
-    data = data[::4]
+    # data = data[::4]
     corr_matrix = np.load(matrix_path)
     state_seq_array = np.load(state_seq_path)
     col = corr_matrix[:,id]
@@ -127,5 +127,5 @@ def find_top_k(id, k):
     plt.savefig('look.png')
     print(idx[:k])
 
-find_top_k(21, 6)
+find_top_k(14, 6)
 # find_top_k(18, 5)

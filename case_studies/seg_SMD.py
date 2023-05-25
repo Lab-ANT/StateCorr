@@ -16,8 +16,8 @@ train_path = os.path.join(data_path, 'train')
 file_list = os.listdir(os.path.join(data_path, 'train'))
 
 # 1024 is about one-day-long
-win_size =256
-step = 50
+win_size =1024
+step = 200
 
 params_LSE['in_channels'] = 1
 params_LSE['out_channels'] = 1
@@ -41,7 +41,7 @@ def seg_all():
 
 def seg_one(file_name):
     data,_,_,_,_,_ = load_SMD(data_path, file_name)
-    data = data[::4]
+    # data = data[::4]
     state_seq_array = []
     for i in tqdm.tqdm(range(data.shape[1])):
         t2s = Time2State(win_size, step, CausalConv_LSE_Adaper(params_LSE), DPGMM(None)).fit(data[:,i].reshape(-1,1), win_size, step)
