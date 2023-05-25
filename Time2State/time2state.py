@@ -79,7 +79,7 @@ class Time2State:
     
     def __find_potentional_cp(self):
         # threshold = np.mean(self.__velocity)
-        threshold = np.percentile(self.__velocity, 75)
+        threshold = np.percentile(self.__velocity, 95)
         idx = self.__velocity>=threshold
         pre = idx[0]
         cut_list = []
@@ -106,18 +106,6 @@ class Time2State:
             result[pre:cut]=label_set[max_idx]
             pre = cut
         return result
-
-    # def __assign_label(self):
-    #     hight = len(set(self.__embedding_label))
-    #     weight_vector = np.ones(shape=(2*self.__offset)).flatten()
-    #     self.__state_seq = self.__embedding_label
-    #     fake_len = (len(self.__embedding_label)-1)*self.__step+self.__win_size
-    #     vote_matrix = np.zeros((fake_len,hight))
-    #     i = 0
-    #     for l in self.__embedding_label:
-    #         vote_matrix[i:i+self.__win_size,l]+= weight_vector
-    #         i+=self.__step
-    #     self.__state_seq = np.array([np.argmax(row) for row in vote_matrix])[:self.__length]
 
     def save_encoder(self):
         pass
