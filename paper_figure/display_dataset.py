@@ -9,12 +9,13 @@ num_in_group = 5
 
 script_path = os.path.dirname(__file__)
 data_path = os.path.join(script_path, '../data/synthetic_data/')
-dataset_name = 'dataset1'
+dataset_name = 'dataset2'
 rue_state_seq_path = os.path.join(script_path, '../data/synthetic_data/state_seq_'+dataset_name+'/')
 
 fig, ax = plt.subplots(nrows=5)
 for i in range(num_in_group):
     data = np.load(os.path.join(data_path, '%s/test%d.npy'%(dataset_name, i)))
     print(data.shape)
-    ax[i].plot(data)
+    ax[i].plot(data[::10], lw=0.8)
+    # ax[i].set_ylim([-1.5, 1.5])
 plt.savefig('dataset.png')
