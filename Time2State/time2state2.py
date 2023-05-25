@@ -92,7 +92,8 @@ class Time2State:
         self.__embedding_label = self.bucket(self.__embedding_label, cut_list)
     
     def __find_potentional_cp(self):
-        threshold = np.mean(self.__velocity)
+        # threshold = np.mean(self.__velocity)
+        threshold = np.percentile(self.__velocity, 95, axis=0)
         idx = self.__velocity>=threshold
         pre = idx[0]
         cut_list = []

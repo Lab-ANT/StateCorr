@@ -34,6 +34,8 @@ def plot_one(file_name):
     state_seq_path = os.path.join(script_path, '../case_study1/state_seq/'+file_name+'.npy')
     state_seq_array = np.load(state_seq_path)
     data,label,_,_,_,_ = load_SMD(data_path, file_name)
+    data = data[::4]
+    label = label[::4]
     corr_matrix = np.load(os.path.join(matrix_save_path, file_name+'.npy'))
     corr_matrix, clustering_label, idx = cluster_corr(corr_matrix)
     fig, ax = plt.subplots(nrows=data.shape[1]+1, figsize=(16,32))

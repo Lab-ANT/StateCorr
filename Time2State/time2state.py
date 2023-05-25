@@ -78,7 +78,8 @@ class Time2State:
         self.__state_seq = self.bucket(self.__state_seq, cut_list)
     
     def __find_potentional_cp(self):
-        threshold = np.mean(self.__velocity)
+        # threshold = np.mean(self.__velocity)
+        threshold = np.percentile(self.__velocity, 75)
         idx = self.__velocity>=threshold
         pre = idx[0]
         cut_list = []
