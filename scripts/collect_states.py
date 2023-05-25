@@ -4,6 +4,16 @@ import os
 from TSpy.label import seg_to_label, reorder_label, compact
 from scipy import io
 import matplotlib.pyplot as plt
+import pandas as pd
+from TSpy.utils import *
+
+def fill_nan(data):
+    x_len, y_len = data.shape
+    for x in range(x_len):
+        for y in range(y_len):
+            if np.isnan(data[x,y]):
+                data[x,y]=data[x-1,y]
+    return data
 
 script_path = os.path.dirname(__file__)
 data_path = os.path.join(script_path, '../data/')
@@ -28,6 +38,23 @@ def load_ActRecTut(use_data):
     groundtruth = reorder_label(groundtruth)
     data = data['data'][:,0:10]
     return data, groundtruth
+
+def load(win_size, step, verbose=False):
+    dataset_path = os.path.join(data_path,'PAMAP2/Protocol/subject10'+str(1)+'.dat')
+    for i in range(1, 9):
+        dataset_path = os.path.join(data_path,'PAMAP2/Protocol/subject10'+str(i)+'.dat')
+        df = pd.read_csv(dataset_path, sep=' ', header=None)
+        data = df.to_numpy()
+        groundtruth = np.array(data[:,1],dtype=int)
+        hand_acc = data[:,4:7]
+        chest_acc = data[:,21:24]
+        ankle_acc = data[:,38:41]
+        data = np.hstack([hand_acc, chest_acc, ankle_acc])
+        data = fill_nan(data)
+        data = normalize(data)
+
+def load_PAMAP2_as_classification_dataset():
+    pass
 
 def load_ActRecTut_as_classification_dataset(use_state=None):
     data1, groundtruth1 = load_ActRecTut('subject1_walk')
