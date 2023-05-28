@@ -27,6 +27,9 @@ params_LSE['compared_length'] = win_size
 if not os.path.exists('case_study1/state_seq/'):
     os.makedirs('case_study1/state_seq/')
 
+# win_type: {'rect', 'hanning'}, default='rect'.
+#             Window function.
+
 def seg_all():
     for file_name in file_list:
         file_name = file_name[:-4]

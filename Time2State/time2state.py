@@ -65,6 +65,7 @@ class Time2State:
         self.__cluster()
         self.__assign_label()
         self.__calculate_velocity()
+        self.__use_cps()
         return self
 
     def __encode(self, X, win_size, step):
