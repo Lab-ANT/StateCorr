@@ -7,12 +7,31 @@ from TSpy.label import reorder_label
 from TSpy.utils import calculate_scalar_velocity_list
 
 class Time2State:
-    def __init__(self, win_size, step, encoder_class, clustering_class, verbose=False):
+    def __init__(self, win_size, step, encoder, clustering_component, verbose=False):
+        """
+        Initialize Time2State.
+
+        Parameters
+        ----------
+        win_size : even integer.
+            The size of sliding window.
+        step : integer.
+            The step size of sliding window.
+        encoder_class : object.
+            The instance of encoder.
+        clustering_class: object.
+            The instance of clustering component.
+        """
+
+        # The window size must be an even number.
+        if win_size%2 != 0:
+            raise ValueError('Window size must be even.')
+
         self.__win_size = win_size
         self.__step = step
         self.__offset = int(win_size/2)
-        self.__encoder = encoder_class
-        self.__clustering_component = clustering_class
+        self.__encoder = encoder
+        self.__clustering_component = clustering_component
 
     def set_step(self, step):
         self.__step = step
