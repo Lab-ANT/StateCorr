@@ -15,10 +15,13 @@ class Time2State:
         ----------
         win_size : even integer.
             The size of sliding window.
+
         step : integer.
             The step size of sliding window.
+
         encoder_class : object.
             The instance of encoder.
+
         clustering_class: object.
             The instance of clustering component.
         """
@@ -32,6 +35,34 @@ class Time2State:
         self.__offset = int(win_size/2)
         self.__encoder = encoder
         self.__clustering_component = clustering_component
+
+    def fit(self, X, win_size, step):
+        """
+        Fit time2state.
+
+        Parameters
+        ----------
+        X : {ndarray} of shape (n_samples, n_features)
+
+        win_size : even integer.
+            Size of sliding window.
+        
+        step : integer.
+            Step size of sliding window.
+
+        Returns
+        -------
+        self : object
+            Fitted time2state.
+        """
+        self.__length = X.shape[0]
+        self.fit_encoder(X)
+        self.__encode(X, win_size, step)
+        self.__cluster()
+        self.__assign_label()
+        self.__calculate_velocity()
+        self.__use_cps()
+        return self
 
     def set_step(self, step):
         self.__step = step
@@ -56,16 +87,6 @@ class Time2State:
         self.__cluster()
         self.__assign_label()
         # self.__use_cps()
-        return self
-
-    def fit(self, X, win_size, step):
-        self.__length = X.shape[0]
-        self.fit_encoder(X)
-        self.__encode(X, win_size, step)
-        self.__cluster()
-        self.__assign_label()
-        self.__calculate_velocity()
-        self.__use_cps()
         return self
 
     def __encode(self, X, win_size, step):
