@@ -45,10 +45,10 @@ class Time2State:
         X : {ndarray} of shape (n_samples, n_features)
 
         win_size : even integer.
-            Size of sliding window.
-        
+            The size of sliding window.
+
         step : integer.
-            Step size of sliding window.
+            The step size of sliding window.
 
         Returns
         -------
@@ -56,12 +56,13 @@ class Time2State:
             Fitted time2state.
         """
         self.__length = X.shape[0]
-        self.fit_encoder(X)
+        # self.fit_encoder(X)
         self.__encode(X, win_size, step)
         self.__cluster()
-        self.__assign_label()
         self.__calculate_velocity()
         self.__use_cps()
+        self.__assign_label()
+        # self.__use_cps()
         return self
 
     def set_step(self, step):
@@ -115,8 +116,11 @@ class Time2State:
 
     def __use_cps(self):
         cut_list = self.__find_potentional_cp()
-        cut_list = self.map_cut_list(cut_list)+self.__offset
-        self.__state_seq = self.bucket(self.__state_seq, cut_list)
+        self.__embedding_label = self.bucket(self.__embedding_label, cut_list)
+    # def __use_cps(self):
+    #     cut_list = self.__find_potentional_cp()
+    #     cut_list = self.map_cut_list(cut_list)+self.__offset
+    #     self.__state_seq = self.bucket(self.__state_seq, cut_list)
     
     def __find_potentional_cp(self):
         # threshold = np.mean(self.__velocity)
@@ -134,7 +138,8 @@ class Time2State:
         return cut_list
 
     def bucket(self, X, cut_points):
-        result = np.array(X.shape, dtype=int)
+        result = np.zeros(X.shape, dtype=int)
+        print(len(cut_points))
         pre = cut_points[0]
         for cut in cut_points[1:]:
             sub_seq = X[pre:cut]
@@ -146,7 +151,8 @@ class Time2State:
             # print(max_idx, len(vote_list), label_set)
             result[pre:cut]=label_set[max_idx]
             pre = cut
-        return result
+        print(result.shape, X.shape, len(cut_points), set(result))
+        return reorder_label(result)
 
     def save_encoder(self):
         pass
