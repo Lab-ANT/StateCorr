@@ -60,8 +60,33 @@ class Time2State:
         self.fit_encoder(X)
         self.__encode(X, win_size, step)
         self.__cluster()
-        # self.__calculate_velocity()
-        # self.__use_cps()
+        self.__assign_label()
+        self.__use_cps()
+        return self
+
+    def predict(self, X, win_size, step):
+        """
+        Find state sequence for X.
+
+        Parameters
+        ----------
+        X : {ndarray} of shape (n_samples, n_features)
+
+        win_size : even integer.
+            The size of sliding window.
+
+        step : integer.
+            The step size of sliding window.
+
+        Returns
+        -------
+        self : object
+            Fitted time2state.
+        """
+        self.__length = X.shape[0]
+        self.__step = step
+        self.__encode(X, win_size, step)
+        self.__cluster()
         self.__assign_label()
         # self.__use_cps()
         return self
@@ -80,15 +105,6 @@ class Time2State:
     def predict_without_encode(self, X, win_size, step):
         self.__cluster()
         self.__assign_label()
-        return self
-
-    def predict(self, X, win_size, step):
-        self.__length = X.shape[0]
-        self.__step = step
-        self.__encode(X, win_size, step)
-        self.__cluster()
-        self.__assign_label()
-        # self.__use_cps()
         return self
 
     def __encode(self, X, win_size, step):
@@ -115,28 +131,35 @@ class Time2State:
     def map_cut_list(self, X):
         return np.array(X, dtype=int)*self.__step
 
-    def __use_cps(self):
-        cut_list = self.__find_potentional_cp()
-        self.__embedding_label = self.bucket(self.__embedding_label, cut_list)
     # def __use_cps(self):
-    #     cut_list = self.__find_potentional_cp()
-    #     cut_list = self.map_cut_list(cut_list)+self.__offset
-    #     self.__state_seq = self.bucket(self.__state_seq, cut_list)
+    #     self.__calculate_velocity()
+    #     cut_list = self.__find_potential_cp()
+    #     self.__embedding_label = self.bucket(self.__embedding_label, cut_list)
+    def __use_cps(self):
+        self.__calculate_velocity()
+        cut_list = self.__find_potential_cp()
+        cut_list = self.map_cut_list(cut_list)+self.__offset
+        self.__state_seq = self.bucket(self.__state_seq, cut_list)
     
-    def __find_potentional_cp(self):
-        threshold = np.mean(self.__velocity)
+    def __find_potential_cp(self):
+        # # threshold = np.mean(self.__velocity)*3
         # threshold = np.percentile(self.__velocity, 95)
-        idx = self.__velocity>=threshold
-        pre = idx[0]
-        cut_list = []
-        for i, e in enumerate(idx):
-            if e == pre:
-                continue
-            else:
-                cut_list.append(i)
-                pre = e
-        self.__change_points = cut_list
-        return cut_list
+        # idx = self.__velocity>=threshold
+        # pre = idx[0]
+        # cut_list = []
+        # for i, e in enumerate(idx):
+        #     if e == pre:
+        #         continue
+        #     else:
+        #         cut_list.append(i)
+        #         pre = e
+        # self.__change_points = cut_list
+        # return cut_list
+
+        # threshold = np.mean(self.__velocity)*3
+        threshold = np.percentile(self.__velocity, 75)
+        idx = np.argwhere(self.__velocity>=threshold)
+        return [e[0] for e in idx]
 
     def bucket(self, X, cut_points):
         result = np.zeros(X.shape, dtype=int)

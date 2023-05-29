@@ -38,14 +38,14 @@ def plot_one(file_name):
     # label = label[::4]
     corr_matrix = np.load(os.path.join(matrix_save_path, file_name+'.npy'))
     corr_matrix, clustering_label, idx = cluster_corr(corr_matrix)
-    fig, ax = plt.subplots(nrows=data.shape[1]+1, figsize=(16,32))
+    fig, ax = plt.subplots(nrows=data.shape[1], figsize=(16,32))
     for i in range(data.shape[1]):
         # ax[i].plot(exclude_outlier(data[:,idx[i]]))
         state_seq = adjust_label(state_seq_array[idx[i]]).reshape(1,-1)
         state_seq = np.concatenate([state_seq, state_seq])
         ax[i].plot(data[:,idx[i]])
         ax[i].imshow(state_seq, aspect='auto', cmap='tab20c', interpolation='nearest', alpha=0.5, origin='lower')
-    ax[data.shape[1]].step(np.arange(len(label)), label, color='red')
+    # ax[data.shape[1]].step(np.arange(len(label)), label, color='red')
     plt.tight_layout()
     plt.subplots_adjust(hspace=0.1)
     plt.savefig(file_name+'.png')
