@@ -9,12 +9,13 @@ from TSpy.label import seg_to_label
 channel_num = 4
 # seg_num = 20
 seg_len = [800, 1200] # 200~1000
-state_num = [4, 8] # 4~8
+# state_num = [4, 8] # 4~8
+state_num = 7
 num_group = 1
 num_ts_in_group = 20
 script_path = os.path.dirname(__file__)
 save_path = os.path.join(script_path, '../data/synthetic_data/')
-dataset_name = 'dataset5'
+dataset_name = 'dataset4'
 random_state = None
 length = 20000
 
@@ -45,7 +46,8 @@ def generate_seg_json(seg_len, state_num, random_state=None):
     if random_state is not None:
         np.random.seed(random_state)
     # generate random state num.
-    random_state_num = np.random.randint(low=state_num[0], high=state_num[1]+1)
+    # random_state_num = np.random.randint(low=state_num[0], high=state_num[1]+1)
+    random_state_num = state_num
     # generate state for each segment.
     seg_json = gen_seg_json(random_state_num, seg_len)
     state_list = [seg_json[seg] for seg in seg_json]

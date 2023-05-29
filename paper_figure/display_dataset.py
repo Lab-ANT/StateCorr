@@ -18,7 +18,7 @@ def find_cp_from_state_seq(X):
 
 script_path = os.path.dirname(__file__)
 data_path = os.path.join(script_path, '../data/synthetic_data/')
-dataset_name = 'dataset1'
+dataset_name = 'dataset3'
 true_state_seq_path = os.path.join(script_path, '../data/synthetic_data/')
 
 plt.style.use('classic')
@@ -28,8 +28,8 @@ for i in range(num_in_group):
     state_seq = np.load(os.path.join(true_state_seq_path, 'state_seq_%s/test%d.npy'%(dataset_name, i)))
     print(data.shape)
     data = z_normalize(data)
-    ax[i].plot(data+1.8, lw=0.8)
-    ax[i].set_ylim([0, 3])
+    ax[i].plot(data+0.8, lw=0.8)
+    ax[i].set_ylim([0.3, 2])
     ax[i].set_yticks([])
     ax[i].set_xlim([0,20000])
 
@@ -39,9 +39,9 @@ for i in range(num_in_group):
     
     state_seq = state_seq.flatten()
     cp_list = find_cp_from_state_seq(state_seq)
-    print(cp_list)
+    # print(cp_list)
     for cp in cp_list:
-            ax[i].vlines(cp, 0, 3, color="black")
+            ax[i].vlines(cp, 0, 2, color="black")
     if i <4:
         ax[i].set_xticks([])
 

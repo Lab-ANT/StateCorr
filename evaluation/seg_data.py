@@ -77,8 +77,10 @@ def use_HDPHSMM(use_data):
         np.save(os.path.join(script_path, '../output/output_HDP-HSMM/'+use_data+'/state_seq/'+file_name[:-4]+'.npy'), prediction)
 
 
-for i in range(1,6):
-    dataset_name = 'dataset'+str(i)
-    use_HDPHSMM(dataset_name)
-    # use_StateCorr(dataset_name)
-    # use_TICC(dataset_name)
+use_StateCorr('dataset1')
+
+# for i in range(1,6):
+#     dataset_name = 'dataset'+str(i)
+#     # use_HDPHSMM(dataset_name)
+#     use_StateCorr(dataset_name)
+#     # use_TICC(dataset_name)
