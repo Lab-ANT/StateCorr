@@ -61,7 +61,7 @@ class Time2State:
         self.__encode(X, win_size, step)
         self.__cluster()
         self.__assign_label()
-        self.__use_cps()
+        # self.__use_cps()
         return self
 
     def predict(self, X, win_size, step):
@@ -157,7 +157,7 @@ class Time2State:
         # return cut_list
 
         # threshold = np.mean(self.__velocity)*3
-        threshold = np.percentile(self.__velocity, 75)
+        threshold = np.percentile(self.__velocity, 95)
         idx = np.argwhere(self.__velocity>=threshold)
         return [e[0] for e in idx]
 
