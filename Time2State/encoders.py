@@ -73,19 +73,6 @@ class CausalConv_LSE(BasicEncoder):
         return network
 
     def fit(self, X, y=None, save_memory=False, verbose=False):
-        """
-        Trains the encoder unsupervisedly using the given training data.
-
-        @param X Training set.
-        @param y Training labels, used only for early stopping, if enabled. If
-               None, disables early stopping in the method.
-        @param save_memory If True, enables to save GPU memory by propagating
-               gradients after each loss term of the encoder loss, instead of
-               doing it after computing the whole loss.
-        @param verbose Enables, if True, to monitor which epoch is running in
-               the encoder training.
-        """
-
         # _, dim = X.shape
         # X = numpy.transpose(numpy.array(X, dtype=float)).reshape(1, dim, -1)
 
@@ -370,18 +357,22 @@ class LSTM_LSE(BasicEncoder):
 
     def encode_window(self, X, win_size=128, batch_size=50, window_batch_size=1000, step=10):
         """
-        Outputs the representations associated to the input by the encoder,
-        for each subseries of the input of the given size (sliding window
-        representations).
+        Encode a time series.
 
-        @param X Testing set.
-        @param window Size of the sliding window.
-        @param step size of the sliding window.
-        @param batch_size Size of batches used for splitting the test data to
-               avoid out of memory errors when using CUDA.
-        @param window_batch_size Size of batches of windows to compute in a
-               run of encode, to save RAM.
-        @param step Step length of the sliding window.
+        Parameters
+        ----------
+        X : {ndarray} of shape (n_samples, n_features).
+        
+        win_size : even integer.
+            Size of window.
+        
+        batch_size : integer.
+            Batch size when encoding.
+
+        window_batch_size : integer.
+
+        step : integer.
+            Step size of sliding window.
         """
         # _, dim = X.shape
         # X = numpy.transpose(numpy.array(X, dtype=float)).reshape(1, dim, -1)
