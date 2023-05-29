@@ -90,9 +90,6 @@ class CausalConv_LSE(BasicEncoder):
         # _, dim = X.shape
         # X = numpy.transpose(numpy.array(X, dtype=float)).reshape(1, dim, -1)
 
-        # Check if the given time series have unequal lengths
-        # varying = bool(numpy.isnan(numpy.sum(X)))
-
         train = torch.from_numpy(X)
         if self.cuda:
             train = train.cuda(self.gpu)
