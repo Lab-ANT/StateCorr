@@ -31,7 +31,6 @@ state_seq_list = []
 state_num_list = []
 for i in range(1,6):
     group_path = true_state_seq_path+str(i)+'/'
-    # print(group_path)
     file_list = os.listdir(group_path)
     for file_name in file_list:
         state_seq = np.load(os.path.join(group_path,file_name))
