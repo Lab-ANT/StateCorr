@@ -11,9 +11,9 @@ def use_StateCorr(use_data):
     data_path = os.path.join(script_path, '../data/synthetic_data/'+use_data)
     file_list = os.listdir(data_path)
 
-    data = np.load(os.path.join(data_path, 'test0.npy'))
-    groundtruth = np.load(os.path.join(script_path, '../data/synthetic_data/state_seq_dataset1/test0.npy'))
-    state_seq = np.load(os.path.join(script_path, '../output/output_StateCorr/'+use_data+'/state_seq/test0.npy'))
+    data = np.load(os.path.join(data_path, 'test2.npy'))
+    groundtruth = np.load(os.path.join(script_path, '../data/synthetic_data/state_seq_dataset1/test2.npy'))
+    state_seq = np.load(os.path.join(script_path, '../output/output_StateCorr/'+use_data+'/state_seq/test2.npy'))
 
     plot_mts(data, groundtruth, state_seq)
     import matplotlib.pyplot as plt
