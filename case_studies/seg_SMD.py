@@ -22,7 +22,7 @@ step = 200
 params_LSE['in_channels'] = 1
 params_LSE['out_channels'] = 1
 params_LSE['nb_steps'] = 20
-params_LSE['compared_length'] = win_size
+params_LSE['win_size'] = win_size
 
 if not os.path.exists('case_study1/state_seq/'):
     os.makedirs('case_study1/state_seq/')

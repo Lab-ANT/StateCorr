@@ -57,11 +57,11 @@ class Time2State:
         """
         
         self.__length = X.shape[0]
-        # self.fit_encoder(X)
+        self.fit_encoder(X)
         self.__encode(X, win_size, step)
         self.__cluster()
-        self.__calculate_velocity()
-        self.__use_cps()
+        # self.__calculate_velocity()
+        # self.__use_cps()
         self.__assign_label()
         # self.__use_cps()
         return self
@@ -124,8 +124,8 @@ class Time2State:
     #     self.__state_seq = self.bucket(self.__state_seq, cut_list)
     
     def __find_potentional_cp(self):
-        # threshold = np.mean(self.__velocity)
-        threshold = np.percentile(self.__velocity, 95)
+        threshold = np.mean(self.__velocity)
+        # threshold = np.percentile(self.__velocity, 95)
         idx = self.__velocity>=threshold
         pre = idx[0]
         cut_list = []
@@ -140,7 +140,7 @@ class Time2State:
 
     def bucket(self, X, cut_points):
         result = np.zeros(X.shape, dtype=int)
-        print(len(cut_points))
+        print(len(cut_points), cut_points)
         pre = cut_points[0]
         for cut in cut_points[1:]:
             sub_seq = X[pre:cut]

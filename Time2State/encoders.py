@@ -38,13 +38,13 @@ class BasicEncoder():
         pass
 
 class CausalConv_LSE(BasicEncoder):
-    def __init__(self, compared_length, nb_random_samples, negative_penalty,
-                   batch_size, nb_steps, lr, penalty, early_stopping,
+    def __init__(self, win_size, batch_size, nb_steps, lr, penalty, early_stopping,
                    channels, depth, reduced_size, out_channels, kernel_size,
-                   in_channels, cuda, gpu, M, N):
+                   in_channels, cuda, gpu, M, N, win_type):
         self.network = self.__create_network(in_channels, channels, depth, reduced_size,
-                                  out_channels, kernel_size, cuda, gpu)
+                                  out_channels, kernel_size, cuda, gpu, win_type)
 
+        self.win_type = win_type
         self.architecture = ''
         self.cuda = cuda
         self.gpu = gpu
@@ -56,14 +56,14 @@ class CausalConv_LSE(BasicEncoder):
         self.in_channels = in_channels
         self.out_channels = out_channels
         self.loss = losses.LSE_loss.LSELoss(
-            compared_length, nb_random_samples, negative_penalty, M, N
+            win_size, M, N, win_type
         )
         self.optimizer = torch.optim.Adam(self.network.parameters(), lr=lr)
         # self.scheduler = torch.optim.lr_scheduler.ExponentialLR(self.optimizer, 0.98, -1)
         self.loss_list = []
     
     def __create_network(self, in_channels, channels, depth, reduced_size,
-                         out_channels, kernel_size, cuda, gpu):
+                         out_channels, kernel_size, cuda, gpu, win_type):
         network = networks.causal_cnn.CausalCNNEncoder(
             in_channels, channels, depth, reduced_size, out_channels,
             kernel_size
@@ -205,7 +205,8 @@ class CausalConv_LSE(BasicEncoder):
         for b in range(num_batch):
             for i in range(math.ceil(num_window/window_batch_size)):
                 masking = numpy.array([X[b,:,j:j+win_size] for j in range(step*i*window_batch_size, step*min((i+1)* window_batch_size, num_window),step)])
-                # masking = hanning_numpy(masking)
+                if self.win_type=='hanning':
+                    masking = hanning_numpy(masking)
                 # print(masking.shape,step*i*window_batch_size, step*min((i+1)* window_batch_size, num_window))
                 embeddings[b,:,i * window_batch_size: (i + 1) * window_batch_size] = numpy.swapaxes(self.encode(masking[:], batch_size=batch_size), 0, 1)
         return embeddings[0].T
