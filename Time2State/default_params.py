@@ -70,8 +70,6 @@ params_LSE = {
     "nb_steps": 20,
     "in_channels": 1,
     "kernel_size": 3,
-    "penalty": None,
-    "early_stopping": None,
     "lr": 0.003,
     "out_channels": 4,
     "reduced_size": 80,
