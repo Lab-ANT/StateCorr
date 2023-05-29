@@ -44,6 +44,6 @@ def plot():
     fig.legend(lines, labels, framealpha=1, bbox_to_anchor=(0.98, 1), ncol=5, fontsize=12)
     plt.tight_layout()
     plt.subplots_adjust(top=0.8)
-    plt.savefig(os.path.join(fig_save_path, 'prc_RQ3.pdf'))
+    plt.savefig(os.path.join(fig_save_path, 'prc_RQ3.png'))
     plt.close()
 plot()

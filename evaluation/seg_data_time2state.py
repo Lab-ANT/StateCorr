@@ -37,8 +37,8 @@ def use_StateCorr(use_data):
         t2s = Time2State(win_size, step, CausalConv_LSE_Adaper(params_LSE), DPGMM(None)).fit(data, win_size, step)
         np.save(os.path.join(script_path, '../output/output_StateCorr/'+use_data+'/state_seq/'+file_name[:-4]+'.npy'), t2s.state_seq)
 
-use_StateCorr('dataset1')
+# use_StateCorr('dataset1')
 
-# for i in range(1,6):
-#     dataset_name = 'dataset'+str(i)
-#     use_StateCorr(dataset_name)
+for i in range(1,6):
+    dataset_name = 'dataset'+str(i)
+    use_StateCorr(dataset_name)

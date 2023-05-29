@@ -10,12 +10,12 @@ channel_num = 4
 # seg_num = 20
 seg_len = [800, 1200] # 200~1000
 # state_num = [4, 8] # 4~8
-state_num = 7
+state_num = 8
 num_group = 1
 num_ts_in_group = 20
 script_path = os.path.dirname(__file__)
 save_path = os.path.join(script_path, '../data/synthetic_data/')
-dataset_name = 'dataset4'
+dataset_name = 'dataset5'
 random_state = None
 length = 20000
 
