@@ -55,6 +55,7 @@ class Time2State:
         self : object
             Fitted time2state.
         """
+        
         self.__length = X.shape[0]
         # self.fit_encoder(X)
         self.__encode(X, win_size, step)
