@@ -47,11 +47,10 @@ class LSELoss(torch.nn.modules.loss._Loss):
         self.M = M
         self.N = N
         # temperature parameter
-        self.tau = 1
+        # self.tau = 1
         # self.lambda1 = 1
 
-    def forward(self, batch, encoder, train, save_memory=False):
-        # length_pos_neg = numpy.random.randint(1, high=length + 1)
+    def forward(self, batch, encoder, save_memory=False):
         M = self.M
         N = self.N
         length_pos_neg=self.win_size
@@ -75,9 +74,12 @@ class LSELoss(torch.nn.modules.loss._Loss):
                     if j<=i:
                         continue
                     else:
+                        # loss1 += -torch.mean(torch.nn.functional.logsigmoid(torch.bmm(
+                        #     embeddings[i].view(1, 1, size_representation),
+                        #     embeddings[j].view(1, size_representation, 1))/self.tau))
                         loss1 += -torch.mean(torch.nn.functional.logsigmoid(torch.bmm(
                             embeddings[i].view(1, 1, size_representation),
-                            embeddings[j].view(1, size_representation, 1))/self.tau))
+                            embeddings[j].view(1, size_representation, 1))))
             center = torch.mean(embeddings, dim=0)
             center_list.append(center)
         
@@ -86,9 +88,12 @@ class LSELoss(torch.nn.modules.loss._Loss):
             for j in range(M):
                 if j<=i:
                     continue
+                # loss2 += -torch.mean(torch.nn.functional.logsigmoid(-torch.bmm(
+                #     center_list[i].view(1, 1, size_representation),
+                #     center_list[j].view(1, size_representation, 1))/self.tau))
                 loss2 += -torch.mean(torch.nn.functional.logsigmoid(-torch.bmm(
                     center_list[i].view(1, 1, size_representation),
-                    center_list[j].view(1, size_representation, 1))/self.tau))
+                    center_list[j].view(1, size_representation, 1))))
 
         loss = loss1/(M*N*(N-1)/2) + loss2/(M*(M-1)/2)
         # loss = loss2/(M*(M-1)/2)

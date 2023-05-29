@@ -91,16 +91,11 @@ class CausalConv_LSE(BasicEncoder):
         # X = numpy.transpose(numpy.array(X, dtype=float)).reshape(1, dim, -1)
 
         # Check if the given time series have unequal lengths
-        varying = bool(numpy.isnan(numpy.sum(X)))
+        # varying = bool(numpy.isnan(numpy.sum(X)))
 
         train = torch.from_numpy(X)
         if self.cuda:
             train = train.cuda(self.gpu)
-
-        if y is not None:
-            nb_classes = numpy.shape(numpy.unique(y, return_counts=True)[1])[0]
-            train_size = numpy.shape(X)[0]
-            ratio = train_size // nb_classes
 
         train_torch_dataset = utils.Dataset(X)
         train_generator = torch.utils.data.DataLoader(
@@ -118,14 +113,7 @@ class CausalConv_LSE(BasicEncoder):
                 if self.cuda:
                     batch = batch.cuda(self.gpu)
                 self.optimizer.zero_grad()
-                if not varying:
-                    loss = self.loss(
-                        batch, self.network, train, save_memory=save_memory
-                    )
-                else:
-                    loss = self.loss_varying(
-                        batch, self.network, train, save_memory=save_memory
-                    )
+                loss = self.loss(batch, self.network, save_memory=save_memory)
                 loss.backward()
                 self.optimizer.step()
                 i += 1
@@ -157,25 +145,13 @@ class CausalConv_LSE(BasicEncoder):
 
         count = 0
         with torch.no_grad():
-            if not varying:
-                for batch in test_generator:
-                    if self.cuda:
-                        batch = batch.cuda(self.gpu)
-                    features[
-                        count * batch_size: (count + 1) * batch_size
-                    ] = self.network(batch).cpu()
-                    count += 1
-            else:
-                for batch in test_generator:
-                    if self.cuda:
-                        batch = batch.cuda(self.gpu)
-                    length = batch.size(2) - torch.sum(
-                        torch.isnan(batch[0, 0])
-                    ).data.cpu().numpy()
-                    features[count: count + 1] = self.network(
-                        batch[:, :, :length]
-                    ).cpu()
-                    count += 1
+            for batch in test_generator:
+                if self.cuda:
+                    batch = batch.cuda(self.gpu)
+                features[
+                    count * batch_size: (count + 1) * batch_size
+                ] = self.network(batch).cpu()
+                count += 1
 
         self.network = self.network.train()
         return features
