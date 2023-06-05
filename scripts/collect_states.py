@@ -77,8 +77,12 @@ def load_ActRecTut_as_classification_dataset(use_state=None):
 
 class_list = []
 class_list += load_ActRecTut_as_classification_dataset(None)
-class_list += load_USC_HAD_as_classification_dataset(1, 1, data_path)
+# class_list += load_USC_HAD_as_classification_dataset(1, 1, data_path)
 print(len(class_list))
+
+for c in class_list:
+    print(len(c))
+# print(len(class_list))
 
 # num_states = len(data)
 # fig, ax = plt.subplots(nrows=num_states)

@@ -92,11 +92,13 @@ def load_ActRecTut_as_classification_dataset(use_state=None):
     for state in use_state:
         idx = np.argwhere(groundtruth==state)
         data_list.append(data[idx].squeeze(1))
-    return data_list[2:]
+    return data_list#[2:]
 
-class_list = load_USC_HAD_as_classification_dataset(1,1,data_path)
-class_list += load_ActRecTut_as_classification_dataset(None)
+class_list1 = load_USC_HAD_as_classification_dataset(1,1,data_path)
+class_list2 = load_ActRecTut_as_classification_dataset(None)
+class_list = [class_list1, class_list2]
 
+print(len(class_list[1]))
 def gen_channel_from_json(seg_json):
     state_list = [seg_json[seg] for seg in seg_json]
     seg_len_list = np.array([seg for seg in seg_json])
@@ -104,8 +106,10 @@ def gen_channel_from_json(seg_json):
     seg_len_list = np.insert(np.diff(seg_len_list), 0, first_seg_len)
     true_state_num = len(set(state_list))
     seg_list = []
+    dataset_num = np.random.randint(low=0, high=2)
+    print(dataset_num)
     for state, seg_len in zip(state_list, seg_len_list):
-        seg = class_list[state][:seg_len]
+        seg = class_list[dataset_num][state][:seg_len]
         seg_list.append(seg)
     result = np.concatenate(seg_list)
     return result

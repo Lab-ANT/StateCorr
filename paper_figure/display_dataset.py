@@ -18,7 +18,7 @@ def find_cp_from_state_seq(X):
 
 script_path = os.path.dirname(__file__)
 data_path = os.path.join(script_path, '../data/synthetic_data/')
-dataset_name = 'dataset3'
+dataset_name = 'dataset1'
 true_state_seq_path = os.path.join(script_path, '../data/synthetic_data/')
 
 plt.style.use('classic')
