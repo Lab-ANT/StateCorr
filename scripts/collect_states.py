@@ -39,22 +39,34 @@ def load_ActRecTut(use_data):
     data = data['data'][:,0:10]
     return data, groundtruth
 
-def load(win_size, step, verbose=False):
+def load_PAMAP2():
     dataset_path = os.path.join(data_path,'PAMAP2/Protocol/subject10'+str(1)+'.dat')
-    for i in range(1, 9):
-        dataset_path = os.path.join(data_path,'PAMAP2/Protocol/subject10'+str(i)+'.dat')
-        df = pd.read_csv(dataset_path, sep=' ', header=None)
-        data = df.to_numpy()
-        groundtruth = np.array(data[:,1],dtype=int)
-        hand_acc = data[:,4:7]
-        chest_acc = data[:,21:24]
-        ankle_acc = data[:,38:41]
-        data = np.hstack([hand_acc, chest_acc, ankle_acc])
-        data = fill_nan(data)
-        data = normalize(data)
+    df = pd.read_csv(dataset_path, sep=' ', header=None)
+    data = df.to_numpy()
+    groundtruth = np.array(data[:,1],dtype=int)
+    hand_acc = data[:,4:7]
+    chest_acc = data[:,21:24]
+    ankle_acc = data[:,38:41]
+    data = np.hstack([hand_acc, chest_acc, ankle_acc])
+    data = fill_nan(data)
+    # data = normalize(data)
+    return data, groundtruth
 
-def load_PAMAP2_as_classification_dataset():
-    pass
+def load_PAMAP2_as_classification_dataset(use_state=None):
+    data, groundtruth = load_PAMAP2()
+    groundtruth = reorder_label(groundtruth)
+    print(data.shape)
+    num_states = len(set(groundtruth))
+
+    if use_state is None:
+        use_state = [int(i) for i in range(num_states)]
+
+    data_list = []
+    for state in use_state:
+        idx = np.argwhere(groundtruth==state)
+        print(idx)
+        data_list.append(data[idx].squeeze(1))
+    return data_list
 
 def load_ActRecTut_as_classification_dataset(use_state=None):
     data1, groundtruth1 = load_ActRecTut('subject1_walk')
@@ -76,7 +88,8 @@ def load_ActRecTut_as_classification_dataset(use_state=None):
     return data_list
 
 class_list = []
-class_list += load_ActRecTut_as_classification_dataset(None)
+class_list += load_PAMAP2_as_classification_dataset(None)
+# class_list += load_ActRecTut_as_classification_dataset(None)
 # class_list += load_USC_HAD_as_classification_dataset(1, 1, data_path)
 print(len(class_list))
 

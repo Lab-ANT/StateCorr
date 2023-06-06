@@ -65,6 +65,8 @@ def find_top_k(id, k, matrix, state_seq_list):
         ax[i].imshow(state_seq, aspect='auto', cmap='tab20c', interpolation='nearest', alpha=0.6, origin='lower', vmax=5, vmin=0)
         ax[i].plot(data_, lw=0.5)
         ax[i].set_ylim([-0.1,1.1])
+        ax[i].set_yticks([])
+        ax[i].set_xlim([0,len(data_)])
 
         if i == 0:
             ax[i].set_title('Indicator %d'%(i+1), loc='left', y=0.55, x=0.02,
@@ -87,21 +89,10 @@ def find_top_k(id, k, matrix, state_seq_list):
     plt.show()
     print(idx[:k])
 
-find_top_k(21, 6, corr_matrix, state_seq_list)
+find_top_k(42, 6, corr_matrix, state_seq_list)
+#73 21 27 52 42 32
 
-#73 21
-# find_top_k(18, 5)
-
-# import matplotlib.pyplot as plt
-
-# plt.style.use('classic')
-# fig, ax = plt.subplots(nrows=20, sharex=True)
-
-# for i in range(20):
-#     ax[i].plot(z_normalize(data[i]))
-#     state_seq = state_seq_list[i].reshape(1,-1)
-#     state_seq = np.concatenate([state_seq, state_seq])
-#     ax[i].imshow(state_seq, aspect='auto', cmap='tab20c', interpolation='nearest', alpha=0.5, origin='lower')
-
-# plt.tight_layout()
+# from TSpy.corr import cluster_corr
+# correlation_matrix, label, idx = cluster_corr(corr_matrix)
+# plt.imshow(correlation_matrix, cmap='gray')
 # plt.show()
