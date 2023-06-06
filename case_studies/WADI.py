@@ -7,8 +7,7 @@ sys.path.append('./')
 from StateCorr import StateCorr
 from TSpy.utils import z_normalize
 
-USE_COMPUTED_STATE_SEQ = False
-USE_COMPUTED_MATRIX = False
+USE_COMPUTED_STATE_SEQ = True
 
 """
 Load data
@@ -31,7 +30,7 @@ data = np.delete(data, unused_col, axis=1)
 data = np.expand_dims(data[::20].T, axis=2)
 print(data.shape)
 
-data = data[:20]
+# data = data[20:40]
 sc = StateCorr()
 
 """
@@ -40,13 +39,10 @@ Use StateCorr
 if USE_COMPUTED_STATE_SEQ:
     state_seq_list = np.load('state_seq.npy')
     sc.load_state_seq_list(state_seq_list)
-else:
-    state_seq_list = sc.fit_predict(data, 256, 50).state_seq_list
-    np.save('state_seq.npy', state_seq_list)
-
-if USE_COMPUTED_MATRIX:
     corr_matrix = np.load('corr_matrix.npy')
 else:
+    state_seq_list = sc.fit_predict(data, 512, 100).state_seq_list
+    np.save('state_seq.npy', state_seq_list)
     corr_matrix = sc.calculate_matrix().corr_matrix
     np.save('corr_matrix.npy', corr_matrix)
 
@@ -91,8 +87,9 @@ def find_top_k(id, k, matrix, state_seq_list):
     plt.show()
     print(idx[:k])
 
-find_top_k(15, 6, corr_matrix, state_seq_list)
+find_top_k(21, 6, corr_matrix, state_seq_list)
 
+#73 21
 # find_top_k(18, 5)
 
 # import matplotlib.pyplot as plt

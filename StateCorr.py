@@ -24,7 +24,7 @@ class StateCorr():
         num_channels = X.shape[2]
 
         params_LSE['in_channels'] = num_channels
-        params_LSE['out_channels'] = 2
+        params_LSE['out_channels'] = 1
         params_LSE['nb_steps'] = 40
         params_LSE['win_size'] = win_size
         params_LSE['win_type'] = 'hanning'
