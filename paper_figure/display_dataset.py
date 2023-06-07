@@ -46,4 +46,5 @@ for i in range(num_in_group):
         ax[i].set_xticks([])
 
 plt.tight_layout()
-plt.savefig('dataset.png')
+plt.show()
+# plt.savefig('dataset.png')

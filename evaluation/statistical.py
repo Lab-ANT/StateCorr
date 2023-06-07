@@ -6,6 +6,7 @@ use_data = 'dataset'
 
 script_path = os.path.dirname(__file__)
 true_state_seq_path = os.path.join(script_path, '../data/synthetic_data/state_seq_'+use_data)
+data_path = os.path.join(script_path, '../data/synthetic_data/'+use_data)
 
 # def num_segs(X):
 #     return len(compact(X))
@@ -48,3 +49,4 @@ for state_seq in state_seq_list:
 print('Num of Segs: ',np.min(num_seg_list), '~', np.max(num_seg_list), np.mean(num_seg_list))
 print('Num of States: ',np.min(num_state_list), '~', np.max(num_state_list), np.mean(num_state_list))
 print('Seg len: ',np.min(all_seg_len_list), '~', np.max(all_seg_len_list), np.mean(all_seg_len_list))
+# print(np.sort(all_seg_len_list))

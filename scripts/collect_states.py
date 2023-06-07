@@ -55,6 +55,8 @@ def load_PAMAP2():
 def load_PAMAP2_as_classification_dataset(use_state=None):
     data, groundtruth = load_PAMAP2()
     groundtruth = reorder_label(groundtruth)
+    data = data[::10]
+    groundtruth = groundtruth[::10]
     print(data.shape)
     num_states = len(set(groundtruth))
 
@@ -64,7 +66,6 @@ def load_PAMAP2_as_classification_dataset(use_state=None):
     data_list = []
     for state in use_state:
         idx = np.argwhere(groundtruth==state)
-        print(idx)
         data_list.append(data[idx].squeeze(1))
     return data_list
 
@@ -93,13 +94,9 @@ class_list += load_PAMAP2_as_classification_dataset(None)
 # class_list += load_USC_HAD_as_classification_dataset(1, 1, data_path)
 print(len(class_list))
 
-for c in class_list:
-    print(len(c))
-# print(len(class_list))
-
-# num_states = len(data)
-# fig, ax = plt.subplots(nrows=num_states)
-# for i in range(num_states):
-#     ax[i].plot(data[i])
-#     print(data[i].shape)
-# plt.savefig('class.png')
+num_states = len(class_list)
+fig, ax = plt.subplots(nrows=num_states)
+for i in range(num_states):
+    ax[i].plot(class_list[i])
+    # print(class_list[i].shape)
+plt.show()

@@ -4,6 +4,7 @@ import os
 import tqdm
 from TSpy.label import seg_to_label, reorder_label, compact
 from scipy import io
+import pandas as pd
 
 # configuration
 channel_num = 4
@@ -15,7 +16,7 @@ num_ts_in_group = 5
 script_path = os.path.dirname(__file__)
 data_path = os.path.join(script_path, '../data/')
 save_path = os.path.join(script_path, '../data/synthetic_data/')
-dataset_name = 'dataset1'
+dataset_name = 'dataset5'
 random_state = None
 length = 20000
 
@@ -54,6 +55,14 @@ def generate_seg_json(seg_len, state_num, random_state=None):
         seg_json = gen_seg_json(random_state_num, seg_len)
         state_list = [seg_json[seg] for seg in seg_json]
     return seg_json
+
+def fill_nan(data):
+    x_len, y_len = data.shape
+    for x in range(x_len):
+        for y in range(y_len):
+            if np.isnan(data[x,y]):
+                data[x,y]=data[x-1,y]
+    return data
 
 def load_USC_HAD_as_classification_dataset(subject, target, dataset_path):
     prefix = os.path.join(dataset_path,'USC-HAD/Subject'+str(subject)+'/')
@@ -94,11 +103,42 @@ def load_ActRecTut_as_classification_dataset(use_state=None):
         data_list.append(data[idx].squeeze(1))
     return data_list#[2:]
 
+def load_PAMAP2():
+    dataset_path = os.path.join(data_path,'PAMAP2/Protocol/subject10'+str(1)+'.dat')
+    df = pd.read_csv(dataset_path, sep=' ', header=None)
+    data = df.to_numpy()
+    groundtruth = np.array(data[:,1],dtype=int)
+    hand_acc = data[:,4:7]
+    chest_acc = data[:,21:24]
+    ankle_acc = data[:,38:41]
+    data = np.hstack([hand_acc, chest_acc, ankle_acc])
+    data = fill_nan(data)
+    # data = normalize(data)
+    return data, groundtruth
+
+def load_PAMAP2_as_classification_dataset(use_state=None):
+    data, groundtruth = load_PAMAP2()
+    groundtruth = reorder_label(groundtruth)
+    data = data[::10]
+    groundtruth = groundtruth[::10]
+    print(data.shape)
+    num_states = len(set(groundtruth))
+
+    if use_state is None:
+        use_state = [int(i) for i in range(num_states)]
+
+    data_list = []
+    for state in use_state:
+        idx = np.argwhere(groundtruth==state)
+        data_list.append(data[idx].squeeze(1))
+    return data_list[5:]
+
 class_list1 = load_USC_HAD_as_classification_dataset(1,1,data_path)
 class_list2 = load_ActRecTut_as_classification_dataset(None)
-class_list = [class_list1, class_list2]
+class_list3 = load_PAMAP2_as_classification_dataset(None)
+class_list = [class_list1, class_list2, class_list3]
 
-print(len(class_list[1]))
+# print(len(class_list[1]))
 def gen_channel_from_json(seg_json):
     state_list = [seg_json[seg] for seg in seg_json]
     seg_len_list = np.array([seg for seg in seg_json])
@@ -106,7 +146,7 @@ def gen_channel_from_json(seg_json):
     seg_len_list = np.insert(np.diff(seg_len_list), 0, first_seg_len)
     true_state_num = len(set(state_list))
     seg_list = []
-    dataset_num = np.random.randint(low=0, high=2)
+    dataset_num = np.random.randint(low=0, high=3)
     print(dataset_num)
     for state, seg_len in zip(state_list, seg_len_list):
         seg = class_list[dataset_num][state][:seg_len]

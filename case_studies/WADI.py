@@ -89,7 +89,14 @@ def find_top_k(id, k, matrix, state_seq_list):
     plt.show()
     print(idx[:k])
 
-find_top_k(42, 6, corr_matrix, state_seq_list)
+def display_all():
+    for i in range(93):
+        plt.plot(data[i])
+        plt.show()
+        plt.close()
+
+display_all()
+# find_top_k(21, 6, corr_matrix, state_seq_list)
 #73 21 27 52 42 32
 
 # from TSpy.corr import cluster_corr
