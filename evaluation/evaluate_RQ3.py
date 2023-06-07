@@ -7,7 +7,7 @@ from TSpy.eval import ARI
 num_in_group = 5
 num = 5
 # method_list = ['HDP-HSMM', 'ClaSP', 'AutoPlait', 'StateCorr', 'TICC']
-method_list = ['ClaSP']
+method_list = ['TICC']
 
 script_path = os.path.dirname(__file__)
 
