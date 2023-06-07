@@ -19,8 +19,8 @@ def use_StateCorr(use_data):
     if not os.path.exists(output_path):
         os.makedirs(output_path)
 
-    win_size = 256
-    step = 50
+    win_size = 512
+    step = 100
 
     params_LSE['M'] = 10
     params_LSE['N'] = 4
@@ -28,7 +28,7 @@ def use_StateCorr(use_data):
     params_LSE['nb_steps'] = 20
     params_LSE['win_size'] = win_size
     params_LSE['kernel_size'] = 3
-    # params_LSE['win_type'] = 'hanning'
+    params_LSE['win_type'] = 'hanning'
 
     for file_name in tqdm.tqdm(file_list):
         data = np.load(os.path.join(data_path, file_name))

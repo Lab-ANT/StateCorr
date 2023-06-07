@@ -95,9 +95,9 @@ def use_ClaSP(use_data):
         print(data.shape)
         state_seq = np.load(os.path.join(true_state_seq_path, file_name))
         n_states = len(set(state_seq))
-        prediction = run_clasp(data[::5], 50, 40, n_states, 0.02)
+        prediction = run_clasp(data[::5], 50, 40, n_states, 0.05)
         prediction = prediction.astype(int)
-        # np.save(output_path+file_name[:-4]+'.npy', prediction)
+        np.save(output_path+file_name[:-4]+'.npy', prediction)
 
 for i in range(1,6):
     use_ClaSP('dataset'+str(i))
