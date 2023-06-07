@@ -3,14 +3,6 @@ import os
 import numpy as np
 import tqdm
 sys.path.append('./')
-# sys.path.append('./Baselines/TICC')
-# from Baselines.TICC import *
-# from TICC_solver import TICC
-# from Time2State.time2state import Time2State
-# from Time2State.adapers import *
-# from Time2State.clustering import *
-# from Time2State.default_params import *
-# from TSpy.utils import *
 from Baselines.hdphsmm import *
 
 script_path = os.path.dirname(__file__)
