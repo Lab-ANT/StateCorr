@@ -7,7 +7,7 @@ from sklearn.metrics import precision_recall_curve
 num_in_group = 5
 num = 5
 # method_list = ['StateCorr', 'TICC', 'AutoPlait', 'ClaSP', 'HDP-HSMM']
-method_list = ['TICC', 'ClaSP', 'HDP-HSMM']
+method_list = ['HDP-HSMM']
 
 for method in method_list:
     prediction_list = []
