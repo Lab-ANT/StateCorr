@@ -17,37 +17,29 @@ def plot():
     fig = plt.figure(figsize=(8,4))
     ax = fig.subplots(ncols=2)
     k = 0
-    # for dir in ['output', 'output']:
-    for i in [2,3]:
+    for dir in ['output', 'output']:
         precision_list = []
         recall_list = []
         for method_name in method_list:
-            precision = np.load(os.path.join(script_path, '../output/output_'+method_name+'/precision_RQ%d.npy'%(i)))
-            recall = np.load(os.path.join(script_path, '../output/output_'+method_name+'/recall_RQ%d.npy'%(i)))
+            precision = np.load(os.path.join(script_path, '../'+dir+'/output_'+method_name+'/precision.npy'))
+            recall = np.load(os.path.join(script_path, '../'+dir+'/output_'+method_name+'/recall.npy'))
             precision_list.append(precision)
             recall_list.append(recall)
             print(precision.shape)
         for i, method_name in enumerate(method_list):
             # print(i)
             ax[k].plot(precision_list[i], recall_list[i], lw=2, label=method_name)
-            f1 = 2*precision_list[i]*recall_list[i]/(precision_list[i]+recall_list[i])
-            idx = np.argmax(f1)
-            ax[k].plot(precision_list[i][idx], recall_list[i][idx], 'o')
-            ax[k].text(precision_list[i][idx], recall_list[i][idx], '%.2f'%(f1[idx]), fontsize=12)
-            print(precision_list[i][idx], recall_list[i][idx])
         k+=1
-    ax[0].set_title('Overall')
+    ax[0].set_title('Dataset I')
     ax[0].set_xlabel('Recall',fontsize=14)
     ax[0].set_ylabel('Precision',fontsize=14)
-    ax[0].set_xticks([0.2,0.4,0.6,0.8,1.0])
-    # ax[0].set_xlim([0,1.05])
-    # ax[0].set_ylim([0,1.05])
-    ax[0].set_yticks([0.2,0.4,0.6,0.8,1.0])
-    ax[1].set_title('Partial')
+    # ax[0].set_xticks([0.2,0.4,0.6,0.8,1.0],fontsize=14)
+    # ax[0].set_yticks([0.2,0.4,0.6,0.8,1.0],fontsize=14)
+    ax[1].set_title('Dataset II')
     ax[1].set_xlabel('Recall',fontsize=14)
     ax[1].set_ylabel('Precision',fontsize=14)
-    ax[1].set_xticks([0.2,0.4,0.6,0.8,1.0])
-    ax[1].set_yticks([0.2,0.4,0.6,0.8,1.0])
+    # ax[1].set_xticks([0.2,0.4,0.6,0.8,1.0],fontsize=14)
+    # ax[1].set_yticks([0.2,0.4,0.6,0.8,1.0],fontsize=14)
     lines, labels = fig.axes[0].get_legend_handles_labels()
     fig.legend(lines, labels, framealpha=1, bbox_to_anchor=(0.98, 1), ncol=5, fontsize=12)
     plt.tight_layout()

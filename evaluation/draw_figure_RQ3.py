@@ -95,8 +95,8 @@ def evaluate_RQ3():
         f1[np.isnan(f1)]=0
         idx = np.argmax(f1)
         print('Best (F1-score, P, R) of '+method_name+': ', f1[idx], precision[idx], recall[idx])
-        np.save(os.path.join(script_path, '../output/output_'+method_name+'/precision.npy'), precision)
-        np.save(os.path.join(script_path, '../output/output_'+method_name+'/recall.npy'), recall)
+        np.save(os.path.join(script_path, '../output/output_'+method_name+'/precision_RQ3.npy'), precision)
+        np.save(os.path.join(script_path, '../output/output_'+method_name+'/recall_RQ3.npy'), recall)
 
     # draw PRC curve
     # plt.style.use('classic')
