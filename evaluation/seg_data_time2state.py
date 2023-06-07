@@ -25,10 +25,10 @@ def use_StateCorr(use_data):
     params_LSE['M'] = 10
     params_LSE['N'] = 4
     params_LSE['out_channels'] = 2
-    params_LSE['nb_steps'] = 40
+    params_LSE['nb_steps'] = 20
     params_LSE['win_size'] = win_size
     params_LSE['kernel_size'] = 3
-    params_LSE['win_type'] = 'hanning'
+    # params_LSE['win_type'] = 'hanning'
 
     for file_name in tqdm.tqdm(file_list):
         data = np.load(os.path.join(data_path, file_name))
