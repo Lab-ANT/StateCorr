@@ -6,8 +6,8 @@ from TSpy.label import reorder_label
 
 num = 5
 # method_list = ['StateCorr', 'TICC', 'AutoPlait', 'ClaSP', 'HDP-HSMM']
-# method_list = ['StateCorr','ClaSP','TICC', 'AutoPlait']
-method_list = ['StateCorr']
+method_list = ['TICC', 'ClaSP', 'HDP-HSMM']
+
 script_path = os.path.dirname(__file__)
 fig_save_path = os.path.join(script_path, '../output/figs/')
 
