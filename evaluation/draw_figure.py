@@ -1,11 +1,11 @@
+from cmath import isnan, nan
 import numpy as np
 import os
 import matplotlib.pyplot as plt
 
 num = 5
-# method_list = ['StateCorr', 'TICC', 'AutoPlait', 'ClaSP', 'HDP-HSMM']
-# method_list = ['StateCorr','ClaSP','TICC', 'AutoPlait']
-method_list = ['StateCorr']
+method_list = ['StateCorr', 'TICC', 'AutoPlait', 'ClaSP', 'HDP-HSMM']
+
 script_path = os.path.dirname(__file__)
 fig_save_path = os.path.join(script_path, '../output/figs/')
 
@@ -31,17 +31,21 @@ def plot():
             # print(i)
             ax[k].plot(precision_list[i], recall_list[i], lw=2, label=method_name)
             f1 = 2*precision_list[i]*recall_list[i]/(precision_list[i]+recall_list[i])
+            f1[np.isnan(f1)] = 0
             idx = np.argmax(f1)
-            ax[k].plot(precision_list[i][idx], recall_list[i][idx], 'o')
-            ax[k].text(precision_list[i][idx], recall_list[i][idx], '%.2f'%(f1[idx]), fontsize=12)
-            print(precision_list[i][idx], recall_list[i][idx])
+            print(f1)
+            x = precision_list[i][idx]
+            y = recall_list[i][idx]
+            ax[k].plot(x, y, 'o')
+            ax[k].text(x*1.01, y*1.01, '%.2f'%(f1[idx]), fontsize=12)
+            print(x, y)
         k+=1
     ax[0].set_title('Overall')
     ax[0].set_xlabel('Recall',fontsize=14)
     ax[0].set_ylabel('Precision',fontsize=14)
     ax[0].set_xticks([0.2,0.4,0.6,0.8,1.0])
-    # ax[0].set_xlim([0,1.05])
-    # ax[0].set_ylim([0,1.05])
+    # ax[0].set_xlim([0.2,1.01])
+    # ax[0].set_ylim([0,1.015])
     ax[0].set_yticks([0.2,0.4,0.6,0.8,1.0])
     ax[1].set_title('Partial')
     ax[1].set_xlabel('Recall',fontsize=14)
