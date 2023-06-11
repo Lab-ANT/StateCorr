@@ -12,18 +12,23 @@ fig_save_path = os.path.join(script_path, '../output/figs/')
 if not os.path.exists(fig_save_path):
     os.makedirs(fig_save_path)
 
+drift_list1 = [(0,0),(0,0),(0,0),(0,0),(0,0)]
+drift_list2 = [(0,0),(0,0),(0,0),(0,0),(0,0)]
+# drift_list2 = [(0,0),(0,0.02),(0,-0.08),(0,0),(0,-0.08)]
+drift_list = [drift_list1, drift_list2]
+c_list = ['#0010FD','#007000','#FF0000','#00BFBF','#BF00BF']
 def plot():
     plt.style.use('classic')
     fig = plt.figure(figsize=(8,4))
     ax = fig.subplots(ncols=2)
     k = 0
     # for dir in ['output', 'output']:
-    for i in [2,3]:
+    for q in [2,3]:
         precision_list = []
         recall_list = []
         for method_name in method_list:
-            precision = np.load(os.path.join(script_path, '../output/output_'+method_name+'/precision_RQ%d.npy'%(i)))
-            recall = np.load(os.path.join(script_path, '../output/output_'+method_name+'/recall_RQ%d.npy'%(i)))
+            precision = np.load(os.path.join(script_path, '../output/output_'+method_name+'/precision_RQ%d.npy'%(q)))
+            recall = np.load(os.path.join(script_path, '../output/output_'+method_name+'/recall_RQ%d.npy'%(q)))
             precision_list.append(precision)
             recall_list.append(recall)
             print(precision.shape)
@@ -36,8 +41,9 @@ def plot():
             print(f1)
             x = precision_list[i][idx]
             y = recall_list[i][idx]
-            ax[k].plot(x, y, 'o')
-            ax[k].text(x*1.01, y*1.01, '%.2f'%(f1[idx]), fontsize=12)
+            ax[k].plot(x, y, 'o', color=c_list[i])
+            # ax[k].plot(x, y, 'o')
+            ax[k].text(x+drift_list[q-2][i][0], y+drift_list[q-2][i][1], '%.2f'%(f1[idx]), fontsize=12)
             print(x, y)
         k+=1
     ax[0].set_title('Overall')
@@ -56,7 +62,7 @@ def plot():
     fig.legend(lines, labels, framealpha=1, bbox_to_anchor=(0.98, 1), ncol=5, fontsize=12)
     plt.tight_layout()
     plt.subplots_adjust(top=0.8)
-    plt.savefig(os.path.join(fig_save_path, 'prc_RQ3.png'))
-    plt.close()
-    # plt.show()
+    # plt.savefig(os.path.join(fig_save_path, 'prc_RQ3.png'))
+    # plt.close()
+    plt.show()
 plot()
