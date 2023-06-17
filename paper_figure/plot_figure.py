@@ -161,7 +161,8 @@ def ARI():
     x = np.arange(len(labels))  # pos of x-ticks.
     width = 0.14  # width of bar
     plt.style.use('ggplot')
-    plt.bar(x - 2.5*width, Time2State, width, label='Time2State',hatch='//.', yerr=[0.05 for i in range(5)])
+    # plt.bar(x - 2.5*width, Time2State, width, label='Time2State',hatch='//.', yerr=[0.05 for i in range(5)])
+    plt.bar(x - 2.5*width, Time2State, width, label='Time2State',hatch='//.')
     plt.bar(x - 1.5*width, TICC_, width, label='TICC', hatch='/.')
     plt.bar(x - .5*width, HDP_HSMM, width, label='HDP-HSMM', hatch='\\.')
     plt.bar(x + .5*width, ClaSP, width, label='ClaSP', hatch='///.')
@@ -169,21 +170,22 @@ def ARI():
     plt.bar(x + 2.5*width, HVGH_, width, label='HVGH', hatch='\\\\\\.')
     plt.scatter([x[3]+1.5*width],[0.05], marker='x', label='refuse to work', color='red')
 
-    # synthetic = ['a','c','b','d','f','e']
-    # MoCap = ['a','ab','b','b','a','c']
-    # USC_HAD = ['a','d','c','b','e','f']
-    # ActRecTut = ['a','a','a','ab','b','b']
-    # PAMAP2 = ['a','a','a','a','','b']
+    synthetic = ['a','c','b','d','f','e']
+    MoCap = ['a','ab','b','b','a','c']
+    USC_HAD = ['a','d','c','b','e','f']
+    ActRecTut = ['a','a','a','ab','b','b']
+    PAMAP2 = ['a','a','a','a','','b']
     # UCR_SEG = ['a','b','b','a','c','c']
     # significant_list = [synthetic,MoCap,ActRecTut,PAMAP2,USC_HAD,UCR_SEG]
-    # mehtod_list = [Time2State, TICC_, HDP_HSMM, ClaSP, Autoplait_, HVGH_]
-    # pos = -2.5
-    # for dataset_num in range(6):
-    #     for i in range(6):
-    #         plt.text((x[dataset_num]+pos*width), mehtod_list[i][dataset_num], significant_list[dataset_num][i], ha='center', va='bottom', color="k", fontsize=12)
-    #         # plt.text((x[dataset_num]+pos*width), mehtod_list[0][0], significant_list[dataset_num][i], ha='center', va='bottom', color="k", fontsize=12)
-    #         pos+=1
-    #     pos=-2.5
+    significant_list = [synthetic,MoCap,ActRecTut,PAMAP2,USC_HAD]
+    mehtod_list = [Time2State, TICC_, HDP_HSMM, ClaSP, Autoplait_, HVGH_]
+    pos = -2.5
+    for dataset_num in range(5):
+        for i in range(6):
+            plt.text((x[dataset_num]+pos*width), mehtod_list[i][dataset_num], significant_list[dataset_num][i], ha='center', va='bottom', color="k", fontsize=12)
+            # plt.text((x[dataset_num]+pos*width), mehtod_list[0][0], significant_list[dataset_num][i], ha='center', va='bottom', color="k", fontsize=12)
+            pos+=1
+        pos=-2.5
 
     plt.ylabel('ARI', size=15)
     plt.xticks(x, labels=labels, size=15)
@@ -196,14 +198,14 @@ def ARI():
 
 def NMI():
     plt.figure(figsize=(10, 3))
-    # labels = ['Synthetic', 'MoCap', 'ActRecTut', 'PAMAP2', 'USC-HAD']
-    labels = ['Synthetic', 'MoCap', 'ActRecTut', 'PAMAP2', 'USC-HAD', 'UCR-SEG']
-    Time2State  =  [0.8004, 0.7564, 0.7400, 0.5911, 0.8123, 0.4437]
-    TICC_ =       [0.7489, 0.7497, 0.7416, 0.5942, 0.7028, 0.2169]
-    Autoplait_ =  [0.1307, 0.8289, 0.1418, 0.0000, 0.5413, 0.1032]
-    HVGH_ =       [0.1606, 0.1523, 0.2088, 0.0374, 0.1883, 0.1439]
-    HDP_HSMM   =  [0.7804, 0.7237, 0.6472, 0.5328, 0.6838, 0.2578]
-    ClaSP      =  [0.4484, 0.6773, 0.2308, 0.5820, 0.6933, 0.5034]
+    labels = ['Synthetic', 'MoCap', 'ActRecTut', 'PAMAP2', 'USC-HAD']
+    # labels = ['Synthetic', 'MoCap', 'ActRecTut', 'PAMAP2', 'USC-HAD', 'UCR-SEG']
+    Time2State  =  [0.8004, 0.7564, 0.7400, 0.5911, 0.8123]
+    TICC_ =       [0.7489, 0.7497, 0.7416, 0.5942, 0.7028]
+    Autoplait_ =  [0.1307, 0.8289, 0.1418, 0.0000, 0.5413]
+    HVGH_ =       [0.1606, 0.1523, 0.2088, 0.0374, 0.1883]
+    HDP_HSMM   =  [0.7804, 0.7237, 0.6472, 0.5328, 0.6838]
+    ClaSP      =  [0.4484, 0.6773, 0.2308, 0.5820, 0.6933]
 
     x = np.arange(len(labels))  # pos of x-ticks.
     width = 0.14  # width of bar
@@ -223,11 +225,12 @@ def NMI():
     USC_HAD = ['a','b','b','b','c','d']
     ActRecTut = ['a','a','a','b','b','b']
     PAMAP2 = ['a','a','a','a','','b']
-    UCR_SEG = ['a','bc','b','a','c','c']
-    significant_list = [synthetic,MoCap,ActRecTut,PAMAP2,USC_HAD,UCR_SEG]
+    # UCR_SEG = ['a','bc','b','a','c','c']
+    # significant_list = [synthetic,MoCap,ActRecTut,PAMAP2,USC_HAD,UCR_SEG]
+    significant_list = [synthetic,MoCap,ActRecTut,PAMAP2,USC_HAD]
     mehtod_list = [Time2State, TICC_, HDP_HSMM, ClaSP, Autoplait_, HVGH_]
     pos = -2.5
-    for dataset_num in range(6):
+    for dataset_num in range(5):
         for i in range(6):
             plt.text((x[dataset_num]+pos*width), mehtod_list[i][dataset_num], significant_list[dataset_num][i], ha='center', va='bottom', color="k", fontsize=12)
             # plt.text((x[dataset_num]+pos*width), mehtod_list[0][0], significant_list[dataset_num][i], ha='center', va='bottom', color="k", fontsize=12)
@@ -244,4 +247,4 @@ def NMI():
     plt.show()
 
 ARI()
-# NMI()
+NMI()
